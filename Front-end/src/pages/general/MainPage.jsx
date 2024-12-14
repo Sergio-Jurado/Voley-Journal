@@ -1,9 +1,14 @@
+import LeagueSearch from "../../components/LeagueSearch"
 
 
 const MainPage = () => {
     return (
         <>
-            <h1>Bienvenido a voley Journal</h1>
+            <LeagueSearch />
+            <div className="text-center">
+                <h1 className="text-3xl font-black">Ligas</h1>
+            </div>
+            <h1></h1>
         </>
     )
 }
