@@ -1,8 +1,14 @@
 import img from "../../../media/Logo.png";
 import { useState } from "react";
+import useLogout from "../utils/useLogout";
+//import useUserInfo from "../utils/useUserInfo";
 
 export const Header = () => {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
+    //const { userInfo } = useUserInfo();
+    const logout = useLogout();
+
+    //console.log(userInfo.role);
 
     const toggleMenu = () => {
         setIsMenuOpen(!isMenuOpen);
@@ -45,28 +51,28 @@ export const Header = () => {
                     className={`${isMenuOpen ? "block" : "hidden"} absolute top-full left-0 w-full bg-blue-900 md:static md:block md:w-auto z-50 rounded-md`}
                 >
                     <ul className="flex flex-col md:flex-row md:space-x-3 font-semibold text-base lg:text-lg">
-                        <li className="p-3 md:p-5 xl:p-8 active">
+
+                        {/*userInfo.role === 'admin' && (
+                            <li className="p-3 md:p-5 xl:p-8">
+                                <a href="/">Panel de Administrador</a>
+                            </li>
+                        )*/}
+
+                        <li className="p-3 md:p-5 xl:p-8">
                             <a href="/">Home</a>
                         </li>
-                        <li className="p-3 md:p-5 xl:p-8">
-                            <a href="/about">About</a>
-                        </li>
-                        <li className="p-3 md:p-5 xl:p-8">
-                            <a href="/projects">Projects</a>
-                        </li>
-                        <li className="p-3 md:p-5 xl:p-8">
-                            <a href="/services">Services</a>
-                        </li>
-                        <li className="p-3 md:p-5 xl:p-8">
-                            <a href="/blog">Blog</a>
+
+                        <li className='p-3 md:p-5 xl:p-8'>
+                            <a onClick={logout}>Logout</a>
                         </li>
                     </ul>
                 </nav>
 
-                {/* Botón de Login */}
-                <button className="hidden md:block border border-white rounded-full font-bold px-4 py-2">
+                {/* Botón de Logout */}
+                {/*
+                <button className=" hidden md:block border border-white rounded-full font-bold px-4 py-2" onClick={logout}>
                     Logout
-                </button>
+                </button>*/}
             </div>
         </header>
     );

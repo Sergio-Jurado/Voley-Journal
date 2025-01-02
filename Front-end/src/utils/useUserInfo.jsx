@@ -15,12 +15,11 @@ const useUserInfo = () => {
             }
 
             try {
-                const response = await fetch(`http://localhost:5000/api/user/${userId}`);
+                const response = await fetch(`http://localhost:5000/api/users/getby/${userId}`);
                 if (!response.ok) {
                     throw new Error('Network response was not ok');
                 }
                 const data = await response.json();
-                console.log(data);
                 setUserInfo(data);
             } catch (err) {
                 setError(err.message);
