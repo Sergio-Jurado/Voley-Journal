@@ -12,25 +12,12 @@ const leagueSchema = new mongoose.Schema({
     },
     teams: {
         type: [String],
+        required: false,
         validate: {
             validator: (v) => v.length <= 12,
             message: 'Una liga puede tener hasta 12 equipos.'
         }
     },
-    news: [{
-        title: {
-            type: String,
-            required: true
-        },
-        content: {
-            type: String,
-            required: true
-        },
-        date: {
-            type: Date,
-            default: Date.now
-        }
-    }]
 });
 
 

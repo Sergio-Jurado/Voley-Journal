@@ -17,6 +17,19 @@ function generateRoundRobin(teams) {
 
 exports.createLeague = async (req, res) => {
     try {
+        const { name, logo } = req.body;
+
+        const league = new League({ name, logo });
+        await league.save();
+
+        res.status(201).json({ message: 'Liga creada exitosamente', league });
+    } catch (error) {
+        res.status(500).json({ message: 'Error al crear la liga', error });
+    }
+};
+
+/*exports.createLeague = async (req, res) => {
+    try {
         const { name, logo, teamsData } = req.body;
 
         let teams = [];
@@ -71,7 +84,7 @@ exports.createLeague = async (req, res) => {
     catch (err) {
         res.status(400).send(err);
     }
-};
+};*/
 
 // Obtener todas las ligas
 exports.getLeagues = async (req, res) => {
