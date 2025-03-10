@@ -26,6 +26,33 @@ const createUser = async (req, res) => {
     }
 };
 
+// Función de Login 
+const login = async (req, res) => {
+    const { username, password } = req.body;
+
+    if (!username || !password) {
+        return res.status(400).json({ error: 'Faltan el nombre de usuario y/o la contraseña' });
+    }
+
+    try {
+        const user = await User.findOne({ username });
+
+        if (!user) {
+            return res.status(404).json({ error: 'Usuario no encontrado' });
+        }
+
+        const passwordMatch = await bcrypt.compare(password, user.password);
+
+        if (passwordMatch) {
+            res.status(200).json({ token: user._id });
+        } else {
+            res.status(401).json({ error: 'Nombre de usuario o contraseña incorrectos' });
+        }
+    } catch (error) {
+        res.status(500).json({ error: 'Error al iniciar sesión' });
+    }
+};
+
 // Obtener todos los usuarios
 const getAllUsers = async (req, res) => {
     try {
@@ -66,34 +93,6 @@ const deleteUser = async (req, res) => {
         res.status(204).send();
     } catch (error) {
         res.status(500).json({ message: error.message });
-    }
-};
-
-
-// Funciona perfectamente
-const login = async (req, res) => {
-    const { username, password } = req.body;
-
-    if (!username || !password) {
-        return res.status(400).json({ error: 'Faltan el nombre de usuario y/o la contraseña' });
-    }
-
-    try {
-        const user = await User.findOne({ username });
-
-        if (!user) {
-            return res.status(404).json({ error: 'Usuario no encontrado' });
-        }
-
-        const passwordMatch = await bcrypt.compare(password, user.password);
-
-        if (passwordMatch) {
-            res.status(200).json({ token: user._id });
-        } else {
-            res.status(401).json({ error: 'Nombre de usuario o contraseña incorrectos' });
-        }
-    } catch (error) {
-        res.status(500).json({ error: 'Error al iniciar sesión' });
     }
 };
 

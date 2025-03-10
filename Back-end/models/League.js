@@ -20,7 +20,6 @@ const leagueSchema = new mongoose.Schema({
     },
 });
 
-
 const League = mongoose.model('League', leagueSchema);
 
 module.exports = League;
