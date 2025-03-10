@@ -67,12 +67,6 @@ export const Header = () => {
                         </li>
                     </ul>
                 </nav>
-
-                {/* Botón de Logout */}
-                {/*
-                <button className=" hidden md:block border border-white rounded-full font-bold px-4 py-2" onClick={logout}>
-                    Logout
-                </button>*/}
             </div>
         </header>
     );
