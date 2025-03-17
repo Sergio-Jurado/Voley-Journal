@@ -42,7 +42,7 @@ const createTeam = async (req, res) => {
 // Obtener todos los equipos
 const getAllTeams = async (req, res) => {
     try {
-        const teams = await Team.find().populate('players', 'name lastName number position'); // Población de jugadores
+        const teams = await Team.find().populate('players', 'name lastName number position');
         res.status(200).json(teams);
     } catch (error) {
         res.status(500).json({ message: error.message });
