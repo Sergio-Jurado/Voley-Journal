@@ -41,9 +41,9 @@ const ShowUsers = () => {
             <table className="min-w-full bg-white">
                 <thead>
                     <tr>
-                        <th className="py-2">ID</th>
+                        <th className="py-2">Nombre De Usuario</th>
                         <th className="py-2">Nombre</th>
-                        <th className="py-2">Email</th>
+                        <th className="py-2">Apellido</th>
                         <th className="py-2">Rol</th>
                         <th className="py-2">Acciones</th>
                     </tr>
@@ -51,9 +51,9 @@ const ShowUsers = () => {
                 <tbody>
                     {users.map(user => (
                         <tr key={user.id} className="border-t">
-                            <td className="py-2">{user.id}</td>
+                            <td className="py-2">{user.username}</td>
                             <td className="py-2">{user.name}</td>
-                            <td className="py-2">{user.email}</td>
+                            <td className="py-2">{user.lastName}</td>
                             <td className="py-2">{user.role}</td>
                             <td className="py-2">
                                 <button
