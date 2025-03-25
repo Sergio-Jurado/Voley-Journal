@@ -1,39 +1,38 @@
-/*
-Aqui quiero que salgan todos los usuarios, que pueda cambiarles el rol y eliminarlos
-*/
-
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 
 const ShowUsers = () => {
     const [users, setUsers] = useState([]);
 
     useEffect(() => {
-        fetch('/api/users/')
+        fetch('http://localhost:5000/api/users/get')
             .then(response => response.json())
-            .then(data => setUsers(data));
+            .then(data => setUsers(data))
+            .catch(error => console.error('Error fetching users:', error));
     }, []);
 
     const changeRole = (userId, newRole) => {
-        fetch(`/api/users/${userId}/change_role/`, {
+        fetch(`http://localhost:5000/api/users/update/${userId}`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify({ role: newRole }),
         })
-        .then(response => response.json())
-        .then(data => {
-            setUsers(users.map(user => user.id === userId ? { ...user, role: newRole } : user));
-        });
+            .then(response => response.json())
+            .then(data => {
+                setUsers(users.map(user => user.id === userId ? { ...user, role: newRole } : user));
+            })
+            .catch(error => console.error('Error changing role:', error));
     };
 
     const deleteUser = (userId) => {
-        fetch(`/api/users/${userId}/`, {
+        fetch(`http://localhost:5000/api/users/delete/${userId}/`, {
             method: 'DELETE',
         })
-        .then(() => {
-            setUsers(users.filter(user => user.id !== userId));
-        });
+            .then(() => {
+                setUsers(users.filter(user => user.id !== userId));
+            })
+            .catch(error => console.error('Error deleting user:', error));
     };
 
     return (
