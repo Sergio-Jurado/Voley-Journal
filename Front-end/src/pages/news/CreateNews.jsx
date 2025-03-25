@@ -5,16 +5,38 @@ function CreateNews() {
     const [content, setContent] = useState('');
     const [category, setCategory] = useState('');
     const [error, setError] = useState(null);
+    const [success, setSuccess] = useState(null);
 
     const handleSubmit = (e) => {
         e.preventDefault();
         if (title === '' || content === '' || category === '') {
             setError('Por favor, completa todos los campos');
+            setSuccess(null);
         } else {
             setError(null);
-            console.log('Noticia creada:', { title, content, category });
-            // Aquí puedes agregar la lógica para enviar la noticia a tu backend
-            // Por ejemplo, una llamada a una API para guardar la noticia
+            fetch('/api/news/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ title, content, category }),
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Error al crear la noticia');
+                }
+                return response.json();
+            })
+            .then(data => {
+                setSuccess('Noticia creada exitosamente');
+                setTitle('');
+                setContent('');
+                setCategory('');
+            })
+            .catch(error => {
+                setError(error.message);
+                setSuccess(null);
+            });
         }
     };
 
@@ -61,6 +83,11 @@ function CreateNews() {
                 {error && (
                     <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4">
                         <span className="block sm:inline">{error}</span>
+                    </div>
+                )}
+                {success && (
+                    <div className="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative mb-4">
+                        <span className="block sm:inline">{success}</span>
                     </div>
                 )}
                 <button
