@@ -2,42 +2,48 @@ import { useState } from 'react';
 
 function CreateNews() {
     const [title, setTitle] = useState('');
-    const [content, setContent] = useState('');
-    const [category, setCategory] = useState('');
+    const [text, setText] = useState('');
+    const [league, setLeague] = useState('');
+    const [image, setImage] = useState(null);
     const [error, setError] = useState(null);
     const [success, setSuccess] = useState(null);
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        if (title === '' || content === '' || category === '') {
+
+        if (!title || !text || !league || !image) {
             setError('Por favor, completa todos los campos');
             setSuccess(null);
-        } else {
-            setError(null);
-            fetch('/api/news/', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ title, content, category }),
-            })
-            .then(response => {
+            return;
+        }
+
+        const formData = new FormData();
+        formData.append('title', title);
+        formData.append('text', text);
+        formData.append('League', league);
+        formData.append('image', image);
+
+        fetch('http://localhost:5000/api/news/', {
+            method: 'POST',
+            body: formData,
+        })
+            .then((response) => {
                 if (!response.ok) {
                     throw new Error('Error al crear la noticia');
                 }
                 return response.json();
             })
-            .then(data => {
+            .then((data) => {
                 setSuccess('Noticia creada exitosamente');
                 setTitle('');
-                setContent('');
-                setCategory('');
+                setText('');
+                setLeague('');
+                setImage(null);
             })
-            .catch(error => {
+            .catch((error) => {
                 setError(error.message);
                 setSuccess(null);
             });
-        }
     };
 
     return (
@@ -57,27 +63,38 @@ function CreateNews() {
                     />
                 </div>
                 <div className="mb-4">
-                    <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="content">
+                    <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="text">
                         Contenido
                     </label>
                     <textarea
                         className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                        id="content"
+                        id="text"
                         rows="4"
-                        value={content}
-                        onChange={(e) => setContent(e.target.value)}
+                        value={text}
+                        onChange={(e) => setText(e.target.value)}
                     />
                 </div>
                 <div className="mb-4">
-                    <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="category">
-                        Categoría
+                    <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="league">
+                        Liga
                     </label>
                     <input
                         className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                        id="category"
+                        id="league"
                         type="text"
-                        value={category}
-                        onChange={(e) => setCategory(e.target.value)}
+                        value={league}
+                        onChange={(e) => setLeague(e.target.value)}
+                    />
+                </div>
+                <div className="mb-4">
+                    <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="image">
+                        Imagen
+                    </label>
+                    <input
+                        className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                        id="image"
+                        type="file"
+                        onChange={(e) => setImage(e.target.files[0])}
                     />
                 </div>
                 {error && (
