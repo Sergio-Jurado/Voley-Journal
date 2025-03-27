@@ -2,56 +2,57 @@ import { useState } from 'react';
 
 const CreateLeague = () => {
     const [leagueName, setLeagueName] = useState('');
-    const [leagueLogo, setLeagueLogo] = useState('');
-    const [teams, setTeams] = useState([{ name: '', logo: '', players: [{ name: '', lastName: '', number: '', position: '', nationality: '' }] }]);
+    const [leagueLogo, setLeagueLogo] = useState(null);
+    const [teams, setTeams] = useState([{ name: '', logo: null }]);
+    const [error, setError] = useState(null);
+    const [success, setSuccess] = useState(null);
 
     const handleAddTeam = () => {
-        setTeams([...teams, { name: '', logo: '', players: [{ name: '', lastName: '', number: '', position: '', nationality: '' }] }]);
-    };
-
-    const handleAddPlayer = (teamIndex) => {
-        const newTeams = [...teams];
-        newTeams[teamIndex].players.push({ name: '', lastName: '', number: '', position: '', nationality: '' });
-        setTeams(newTeams);
+        setTeams([...teams, { name: '', logo: null }]);
     };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+
         try {
+            // Subir la liga
+            const leagueFormData = new FormData();
+            leagueFormData.append('name', leagueName);
+            leagueFormData.append('leagueLogo', leagueLogo);
+
             const leagueResponse = await fetch('/api/leagues', {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ name: leagueName, logo: leagueLogo }),
+                body: leagueFormData,
             });
+
+            if (!leagueResponse.ok) {
+                throw new Error('Error al crear la liga');
+            }
+
             const leagueData = await leagueResponse.json();
 
+            // Subir los equipos
             for (const team of teams) {
-                const teamResponse = await fetch(`/api/leagues/${leagueData._id}/teams`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({ name: team.name, logo: team.logo }),
-                });
-                const teamData = await teamResponse.json();
+                const teamFormData = new FormData();
+                teamFormData.append('name', team.name);
+                teamFormData.append('teamLogo', team.logo);
 
-                for (const player of team.players) {
-                    await fetch(`/api/teams/${teamData._id}/players`, {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                        },
-                        body: JSON.stringify(player),
-                    });
+                const teamResponse = await fetch(`/api/leagues/${leagueData.league._id}/teams`, {
+                    method: 'POST',
+                    body: teamFormData,
+                });
+
+                if (!teamResponse.ok) {
+                    throw new Error('Error al añadir un equipo');
                 }
             }
 
-            alert('Liga creada exitosamente');
+            setSuccess('Liga creada exitosamente');
+            setLeagueName('');
+            setLeagueLogo(null);
+            setTeams([{ name: '', logo: null }]);
         } catch (error) {
-            console.error('Error creating league:', error);
-            alert('Error creating league');
+            setError(error.message);
         }
     };
 
@@ -71,9 +72,8 @@ const CreateLeague = () => {
                 <div className="mb-4">
                     <label className="block text-gray-700">Logo de la Liga</label>
                     <input
-                        type="text"
-                        value={leagueLogo}
-                        onChange={(e) => setLeagueLogo(e.target.value)}
+                        type="file"
+                        onChange={(e) => setLeagueLogo(e.target.files[0])}
                         className="w-full p-2 border border-gray-300 rounded"
                     />
                 </div>
@@ -96,93 +96,15 @@ const CreateLeague = () => {
                         <div className="mb-2">
                             <label className="block text-gray-700">Logo del Equipo</label>
                             <input
-                                type="text"
-                                value={team.logo}
+                                type="file"
                                 onChange={(e) => {
                                     const newTeams = [...teams];
-                                    newTeams[teamIndex].logo = e.target.value;
+                                    newTeams[teamIndex].logo = e.target.files[0];
                                     setTeams(newTeams);
                                 }}
                                 className="w-full p-2 border border-gray-300 rounded"
                             />
                         </div>
-                        {team.players.map((player, playerIndex) => (
-                            <div key={playerIndex} className="mb-2 p-2 border border-gray-200 rounded">
-                                <h3 className="text-lg font-bold mb-1">Jugador {playerIndex + 1}</h3>
-                                <div className="mb-1">
-                                    <label className="block text-gray-700">Nombre</label>
-                                    <input
-                                        type="text"
-                                        value={player.name}
-                                        onChange={(e) => {
-                                            const newTeams = [...teams];
-                                            newTeams[teamIndex].players[playerIndex].name = e.target.value;
-                                            setTeams(newTeams);
-                                        }}
-                                        className="w-full p-2 border border-gray-300 rounded"
-                                    />
-                                </div>
-                                <div className="mb-1">
-                                    <label className="block text-gray-700">Apellido</label>
-                                    <input
-                                        type="text"
-                                        value={player.lastName}
-                                        onChange={(e) => {
-                                            const newTeams = [...teams];
-                                            newTeams[teamIndex].players[playerIndex].lastName = e.target.value;
-                                            setTeams(newTeams);
-                                        }}
-                                        className="w-full p-2 border border-gray-300 rounded"
-                                    />
-                                </div>
-                                <div className="mb-1">
-                                    <label className="block text-gray-700">Número</label>
-                                    <input
-                                        type="text"
-                                        value={player.number}
-                                        onChange={(e) => {
-                                            const newTeams = [...teams];
-                                            newTeams[teamIndex].players[playerIndex].number = e.target.value;
-                                            setTeams(newTeams);
-                                        }}
-                                        className="w-full p-2 border border-gray-300 rounded"
-                                    />
-                                </div>
-                                <div className="mb-1">
-                                    <label className="block text-gray-700">Posición</label>
-                                    <input
-                                        type="text"
-                                        value={player.position}
-                                        onChange={(e) => {
-                                            const newTeams = [...teams];
-                                            newTeams[teamIndex].players[playerIndex].position = e.target.value;
-                                            setTeams(newTeams);
-                                        }}
-                                        className="w-full p-2 border border-gray-300 rounded"
-                                    />
-                                </div>
-                                <div className="mb-1">
-                                    <label className="block text-gray-700">Nacionalidad</label>
-                                    <input
-                                        type="text"
-                                        value={player.nationality}
-                                        onChange={(e) => {
-                                            const newTeams = [...teams];
-                                            newTeams[teamIndex].players[playerIndex].nationality = e.target.value;
-                                            setTeams(newTeams);
-                                        }}
-                                        className="w-full p-2 border border-gray-300 rounded"
-                                    />
-                                </div>
-                            </div>
-                        ))}
-                        <button
-                            type="button"
-                            onClick={() => handleAddPlayer(teamIndex)}
-                            className="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-700"
-                        >
-                            Añadir Jugador
-                        </button>
                     </div>
                 ))}
                 <button
@@ -192,6 +114,8 @@ const CreateLeague = () => {
                 >
                     Añadir Equipo
                 </button>
+                {error && <div className="text-red-500 mb-4">{error}</div>}
+                {success && <div className="text-green-500 mb-4">{success}</div>}
                 <button
                     type="submit"
                     className="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-700"
