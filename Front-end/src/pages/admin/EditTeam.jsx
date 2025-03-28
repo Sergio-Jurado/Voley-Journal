@@ -1,63 +1,47 @@
 import { useState, useEffect } from 'react';
 
-const EditTeam = ({ playerId }) => {
-    const [player, setPlayer] = useState({
-        name: '',
-        lastName: '',
-        number: '',
-        position: '',
-        nationality: '',
-    });
+const EditTeam = ({ teamId }) => {
+    const [teamName, setTeamName] = useState('');
+    const [teamLogo, setTeamLogo] = useState(null);
     const [error, setError] = useState(null);
     const [success, setSuccess] = useState(null);
 
-    // Obtener los datos actuales del jugador
+    // Obtener los datos actuales del equipo
     useEffect(() => {
-        fetch(`http://localhost:5000/api/players/${playerId}`)
+        fetch(`http://localhost:5000/api/teams/${teamId}`)
             .then((response) => {
                 if (!response.ok) {
-                    throw new Error('Error al obtener los datos del jugador');
+                    throw new Error('Error al obtener los datos del equipo');
                 }
                 return response.json();
             })
             .then((data) => {
-                setPlayer({
-                    name: data.name,
-                    lastName: data.lastName,
-                    number: data.number,
-                    position: data.position,
-                    nationality: data.nationality,
-                });
+                setTeamName(data.name);
             })
             .catch((error) => setError(error.message));
-    }, [playerId]);
-
-    const handleChange = (e) => {
-        const { name, value } = e.target;
-        setPlayer((prevPlayer) => ({
-            ...prevPlayer,
-            [name]: value,
-        }));
-    };
+    }, [teamId]);
 
     const handleSubmit = (e) => {
         e.preventDefault();
 
-        fetch(`http://localhost:5000/api/players/${playerId}`, {
+        const formData = new FormData();
+        formData.append('name', teamName);
+        if (teamLogo) {
+            formData.append('logo', teamLogo);
+        }
+
+        fetch(`http://localhost:5000/api/teams/${teamId}`, {
             method: 'PUT',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(player),
+            body: formData,
         })
             .then((response) => {
                 if (!response.ok) {
-                    throw new Error('Error al actualizar los datos del jugador');
+                    throw new Error('Error al actualizar el equipo');
                 }
                 return response.json();
             })
             .then(() => {
-                setSuccess('Jugador actualizado exitosamente');
+                setSuccess('Equipo actualizado exitosamente');
                 setError(null);
             })
             .catch((error) => {
@@ -68,61 +52,22 @@ const EditTeam = ({ playerId }) => {
 
     return (
         <div className="container mx-auto p-4">
-            <h1 className="text-2xl font-bold mb-4">Editar Jugador</h1>
+            <h1 className="text-2xl font-bold mb-4">Editar Equipo</h1>
             <form onSubmit={handleSubmit}>
                 <div className="mb-4">
-                    <label className="block text-gray-700">Nombre</label>
+                    <label className="block text-gray-700">Nombre del Equipo</label>
                     <input
                         type="text"
-                        name="name"
-                        value={player.name}
-                        onChange={handleChange}
+                        value={teamName}
+                        onChange={(e) => setTeamName(e.target.value)}
                         className="w-full p-2 border border-gray-300 rounded"
                     />
                 </div>
                 <div className="mb-4">
-                    <label className="block text-gray-700">Apellido</label>
+                    <label className="block text-gray-700">Logo del Equipo</label>
                     <input
-                        type="text"
-                        name="lastName"
-                        value={player.lastName}
-                        onChange={handleChange}
-                        className="w-full p-2 border border-gray-300 rounded"
-                    />
-                </div>
-                <div className="mb-4">
-                    <label className="block text-gray-700">Número</label>
-                    <input
-                        type="number"
-                        name="number"
-                        value={player.number}
-                        onChange={handleChange}
-                        className="w-full p-2 border border-gray-300 rounded"
-                    />
-                </div>
-                <div className="mb-4">
-                    <label className="block text-gray-700">Posición</label>
-                    <select
-                        name="position"
-                        value={player.position}
-                        onChange={handleChange}
-                        className="w-full p-2 border border-gray-300 rounded"
-                    >
-                        <option value="">Seleccionar posición</option>
-                        <option value="Setter">Setter</option>
-                        <option value="Middle-blocker">Middle-blocker</option>
-                        <option value="Attacker">Attacker</option>
-                        <option value="Opposite">Opposite</option>
-                        <option value="Libero">Libero</option>
-                    </select>
-                </div>
-                <div className="mb-4">
-                    <label className="block text-gray-700">Nacionalidad</label>
-                    <input
-                        type="text"
-                        name="nationality"
-                        value={player.nationality}
-                        onChange={handleChange}
+                        type="file"
+                        onChange={(e) => setTeamLogo(e.target.files[0])}
                         className="w-full p-2 border border-gray-300 rounded"
                     />
                 </div>
@@ -138,6 +83,5 @@ const EditTeam = ({ playerId }) => {
         </div>
     );
 };
-
 
 export default EditTeam;
