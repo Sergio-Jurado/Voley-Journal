@@ -1,4 +1,3 @@
-import LeagueCard from "../../components/LeagueCard"
 import LeagueSearch from "../../components/LeagueSearch"
 
 
@@ -12,11 +11,6 @@ const MainPage = () => {
                 <h1 className="text-3xl font-black">Ligas</h1>
                 <div className=" min-h-screen p-8">
                     <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-                        <LeagueCard />
-                        <LeagueCard />
-                        <LeagueCard />
-                        <LeagueCard />
-                        <LeagueCard />
                     </div>
                 </div>
             </div>
