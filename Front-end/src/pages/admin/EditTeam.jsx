@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import PropTypes from 'prop-types';
 
 const EditTeam = ({ teamId }) => {
     const [teamName, setTeamName] = useState('');
@@ -82,6 +83,9 @@ const EditTeam = ({ teamId }) => {
             </form>
         </div>
     );
+};
+EditTeam.propTypes = {
+    teamId: PropTypes.string.isRequired,
 };
 
 export default EditTeam;
