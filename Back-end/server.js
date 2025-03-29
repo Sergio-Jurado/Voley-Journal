@@ -3,7 +3,7 @@ const mongoose = require('mongoose');
 const cors = require('cors');
 const dotenv = require('dotenv');
 const userRoutes = require('./routes/userRoutes');
-const articleRoutes = require('./routes/articleRoutes');
+const newsRoutes = require('./routes/newsRoutes');
 const teamRoutes = require('./routes/teamRoutes');
 const playersRoutes = require('./routes/playerRoutes');
 const leagueRoutes = require('./routes/leagueRoutes');
@@ -26,7 +26,7 @@ mongoose.connect('mongodb+srv://juradotrillosergio1207:sjurtri1207@clustertfg.xv
     .catch(err => console.error('Error al conectar a MongoDB:', err));
 
 app.use('/api/users', userRoutes);
-app.use('/api/articles', articleRoutes);
+app.use('/api/news', newsRoutes);
 app.use('/api/teams', teamRoutes);
 app.use('/api/players', playersRoutes);
 app.use('/api/leagues', leagueRoutes);

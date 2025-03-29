@@ -1,41 +1,38 @@
 const Team = require('../models/Team');
+const League = require('../models/League');
 
 // Crear un nuevo equipo
 const createTeam = async (req, res) => {
     try {
-        const { logo, name, coach, playersData } = req.body;
+        const { name, idLeague } = req.body;
+        const logo = req.file ? req.file.filename : null;
 
-        const teamPlayers = [];
-        for (const playerData of playersData) {
-            const player = new Player({
-                name: playerData.name,
-                lastName: playerData.lastName,
-                number: playerData.number,
-                position: playerData.position,
-                nationality: playerData.nationality,
-                team: null // Se actualizará después de crear el equipo
-            });
-            await player.save();
-            teamPlayers.push(player._id);
+        if (!name) {
+            return res.status(400).json({ message: 'El nombre del equipo es obligatorio' });
         }
 
-        const newTeam = new Team({
-            logo,
-            name,
-            coach,
-            players: teamPlayers,
-            idLeague: null // Se actualizará cuando se asocie a una liga
-        });
-        await newTeam.save();
-
-        // Actualizar team en los jugadores
-        for (const playerId of teamPlayers) {
-            await Player.findByIdAndUpdate(playerId, { team: newTeam._id });
+        if (!idLeague) {
+            return res.status(400).json({ message: 'El ID de la liga es obligatorio' });
         }
 
-        res.status(201).json(newTeam);
+        if (!logo) {
+            return res.status(400).json({ message: 'El logo del equipo es obligatorio' });
+        }
+
+        const league = await League.findById(idLeague);
+        if (!league) {
+            return res.status(404).json({ message: 'Liga no encontrada' });
+        }
+
+        const team = new Team({ name, logo, idLeague });
+        await team.save();
+
+        league.teams.push(team._id);
+        await league.save();
+
+        res.status(201).json({ message: 'Equipo creado exitosamente', team });
     } catch (error) {
-        res.status(400).json({ message: error.message });
+        res.status(500).json({ message: 'Error al crear el equipo', error: error.message });
     }
 };
 

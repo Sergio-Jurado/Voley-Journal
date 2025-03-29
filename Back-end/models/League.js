@@ -11,10 +11,10 @@ const leagueSchema = new mongoose.Schema({
         required: true
     },
     teams: {
-        type: [String],
-        required: false,
+        type: [mongoose.Schema.Types.ObjectId], // Cambiado a ObjectId
+        ref: 'Team', // Referencia al modelo Team
         validate: {
-            validator: (v) => v.length <= 12,
+            validator: (v) => v.length <= 12, // Validación para un máximo de 12 equipos
             message: 'Una liga puede tener hasta 12 equipos.'
         }
     },

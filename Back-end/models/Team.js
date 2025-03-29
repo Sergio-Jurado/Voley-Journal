@@ -14,7 +14,7 @@ const teamSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Player',
         required: false,
-        validate: [arrayLimit, '{PATH} debe tener un máximo de 12 jugadores']
+        validate: [arrayLimit, 'debe tener un máximo de 12 jugadores']
     }]
 });
 
