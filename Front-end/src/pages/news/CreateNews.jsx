@@ -1,121 +1,134 @@
-import { useState } from 'react';
+import { useState } from "react";
 
-function CreateNews() {
-    const [title, setTitle] = useState('');
-    const [text, setText] = useState('');
-    const [league, setLeague] = useState('');
-    const [image, setImage] = useState(null);
-    const [error, setError] = useState(null);
-    const [success, setSuccess] = useState(null);
+const CreateNews = () => {
+    const [newsTitle, setNewsTitle] = useState(""); // Título de la noticia
+    const [newsText, setNewsText] = useState(""); // Texto de la noticia
+    const [newsImage, setNewsImage] = useState(null); // Imagen de la noticia
+    const [newsImagePreview, setNewsImagePreview] = useState(null); // Vista previa de la imagen
+    const [error, setError] = useState(null); // Manejo de errores
+    const [success, setSuccess] = useState(null); // Manejo de éxito
 
-    const handleSubmit = (e) => {
-        e.preventDefault();
-
-        if (!title || !text || !league || !image) {
-            setError('Por favor, completa todos los campos');
-            setSuccess(null);
-            return;
+    // Manejar el cambio de la imagen y generar la vista previa
+    const handleImageChange = (e) => {
+        const file = e.target.files[0];
+        setNewsImage(file);
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = () => {
+                setNewsImagePreview(reader.result); // Generar la vista previa
+            };
+            reader.readAsDataURL(file);
         }
+    };
 
-        const formData = new FormData();
-        formData.append('title', title);
-        formData.append('text', text);
-        formData.append('League', league);
-        formData.append('image', image);
+    // Manejar el envío del formulario
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        setError(null);
+        setSuccess(null);
 
-        fetch('http://localhost:5000/api/news/', {
-            method: 'POST',
-            body: formData,
-        })
-            .then((response) => {
-                if (!response.ok) {
-                    throw new Error('Error al crear la noticia');
-                }
-                return response.json();
-            })
-            .then((data) => {
-                setSuccess('Noticia creada exitosamente');
-                setTitle('');
-                setText('');
-                setLeague('');
-                setImage(null);
-            })
-            .catch((error) => {
-                setError(error.message);
-                setSuccess(null);
+        try {
+            if (!newsTitle || !newsText || !newsImage) {
+                throw new Error("Todos los campos son obligatorios");
+            }
+
+            const formData = new FormData();
+            formData.append("title", newsTitle);
+            formData.append("text", newsText);
+            formData.append("image", newsImage);
+
+            const response = await fetch("http://localhost:5000/api/news/create", {
+                method: "POST",
+                body: formData,
             });
+
+            if (!response.ok) {
+                throw new Error("Error al crear la noticia");
+            }
+
+            setSuccess("Noticia creada exitosamente");
+            setNewsTitle("");
+            setNewsText("");
+            setNewsImage(null);
+            setNewsImagePreview(null);
+        } catch (error) {
+            setError(error.message);
+        }
     };
 
     return (
-        <div className="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
-            <h2 className="text-3xl font-bold mb-4">Crear Noticia</h2>
-            <form onSubmit={handleSubmit}>
-                <div className="mb-4">
-                    <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="title">
-                        Título
-                    </label>
+        <div className="max-w-4xl mx-auto p-6 bg-white shadow-md rounded-lg">
+            <h1 className="text-3xl font-bold text-center text-blue-600 mb-6">Crear Noticia</h1>
+            <form onSubmit={handleSubmit} className="space-y-6">
+                <div>
+                    <label className="block text-lg font-medium text-gray-700 mb-2">Título</label>
                     <input
-                        className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                        id="title"
                         type="text"
-                        value={title}
-                        onChange={(e) => setTitle(e.target.value)}
+                        value={newsTitle}
+                        onChange={(e) => setNewsTitle(e.target.value)}
+                        className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        placeholder="Introduce el título de la noticia"
                     />
                 </div>
-                <div className="mb-4">
-                    <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="text">
-                        Contenido
-                    </label>
+                <div>
+                    <label className="block text-lg font-medium text-gray-700 mb-2">Texto</label>
                     <textarea
-                        className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                        id="text"
-                        rows="4"
-                        value={text}
-                        onChange={(e) => setText(e.target.value)}
-                    />
+                        value={newsText}
+                        onChange={(e) => setNewsText(e.target.value)}
+                        className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        placeholder="Introduce el texto de la noticia"
+                        rows="5"
+                    ></textarea>
                 </div>
-                <div className="mb-4">
-                    <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="league">
-                        Liga
-                    </label>
+                <div>
+                    <label className="block text-lg font-medium text-gray-700 mb-2">Imagen</label>
                     <input
-                        className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                        id="league"
-                        type="text"
-                        value={league}
-                        onChange={(e) => setLeague(e.target.value)}
-                    />
-                </div>
-                <div className="mb-4">
-                    <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="image">
-                        Imagen
-                    </label>
-                    <input
-                        className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                        id="image"
                         type="file"
-                        onChange={(e) => setImage(e.target.files[0])}
+                        onChange={handleImageChange}
+                        className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                     />
+                </div>
+                <div>
+                    <h2 className="text-2xl font-semibold text-gray-800 mb-4">Vista Previa</h2>
+                    <div className="border border-gray-300 p-4 rounded-lg bg-gray-50 flex flex-col md:flex-row items-center">
+                        {newsImagePreview && (
+                            <img
+                                src={newsImagePreview}
+                                alt="Vista previa"
+                                className="w-full md:w-1/3 h-48 object-cover rounded-lg mb-4 md:mb-0 md:mr-4"
+                            />
+                        )}
+                        <div className="flex-1">
+                            <h3
+                                className="text-2xl font-bold text-gray-800 mb-2 truncate"
+                                style={{ wordWrap: "break-word" }}
+                            >
+                                {newsTitle || "Título de la noticia"}
+                            </h3>
+                            <p
+                                className="text-gray-700 text-lg"
+                                style={{ wordWrap: "break-word" }}
+                            >
+                                {newsText || "Texto de la noticia"}
+                            </p>
+                        </div>
+                    </div>
                 </div>
                 {error && (
-                    <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4">
-                        <span className="block sm:inline">{error}</span>
-                    </div>
+                    <div className="text-red-500 text-center font-medium">{error}</div>
                 )}
                 {success && (
-                    <div className="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative mb-4">
-                        <span className="block sm:inline">{success}</span>
-                    </div>
+                    <div className="text-green-500 text-center font-medium">{success}</div>
                 )}
                 <button
-                    className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
                     type="submit"
+                    className="w-full bg-blue-500 text-white py-3 rounded-lg hover:bg-blue-600 transition duration-200"
                 >
                     Crear Noticia
                 </button>
             </form>
         </div>
     );
-}
+};
 
 export default CreateNews;

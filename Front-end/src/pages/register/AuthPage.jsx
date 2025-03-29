@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from "react-router-dom";
-import fondo from '../../../../media/fondo.jpg';
+import fondo from '../../../../Back-end/media/fondo.jpg';
 
 function Login() {
     const [username, setUsername] = useState('');
