@@ -11,14 +11,14 @@ const ShowLeague = () => {
     useEffect(() => {
         const fetchLeagueData = async () => {
             try {
-                const leagueResponse = await fetch(`http://localhost:5000/api/leagues/${id}`);
+                const leagueResponse = await fetch(`http://localhost:5000/api/leagues/getby/${id}`);
                 if (!leagueResponse.ok) {
                     throw new Error("Error al obtener los datos de la liga");
                 }
                 const leagueData = await leagueResponse.json();
                 setLeague(leagueData);
 
-                const teamsResponse = await fetch(`http://localhost:5000/api/teams/league/${id}`);
+                const teamsResponse = await fetch(`http://localhost:5000/api/teams/getby/${id}`);
                 if (!teamsResponse.ok) {
                     throw new Error("Error al obtener los equipos de la liga");
                 }
@@ -52,7 +52,7 @@ const ShowLeague = () => {
                         className="w-32 h-32 object-cover rounded-full mx-auto mb-4"
                     />
                 )}
-                <h1 className="text-3xl font-bold text-blue-600">{league?.name}</h1>
+                <h1 className="text-3xl font-bold text-blue-600">{league.name}</h1>
             </div>
 
             <div>

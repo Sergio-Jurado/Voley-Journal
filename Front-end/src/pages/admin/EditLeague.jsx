@@ -6,8 +6,9 @@ const EditLeague = ({ leagueId }) => {
     const [error, setError] = useState(null);
     const [success, setSuccess] = useState(null);
 
+    // Obtener los datos actuales de la liga
     useEffect(() => {
-        fetch(`http://localhost:5000/api/leagues/${leagueId}`)
+        fetch(`http://localhost:5000/api/leagues/getby/${leagueId}`)
             .then((response) => {
                 if (!response.ok) {
                     throw new Error('Error al obtener los datos de la liga');
@@ -29,7 +30,7 @@ const EditLeague = ({ leagueId }) => {
             formData.append('leagueLogo', leagueLogo);
         }
 
-        fetch(`http://localhost:5000/api/leagues/${leagueId}`, {
+        fetch(`http://localhost:5000/api/leagues/update/${leagueId}`, {
             method: 'PUT',
             body: formData,
         })

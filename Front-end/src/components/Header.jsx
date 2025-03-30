@@ -46,10 +46,6 @@ export const Header = () => {
                 >
                     <ul className="flex flex-col md:flex-row md:space-x-3 font-semibold text-base lg:text-lg">
                         <li className="p-3 md:p-5 xl:p-8">
-                            <a href="/">Home</a>
-                        </li>
-
-                        <li className="p-3 md:p-5 xl:p-8">
                             <a href="/news">Noticias</a>
                         </li>
 

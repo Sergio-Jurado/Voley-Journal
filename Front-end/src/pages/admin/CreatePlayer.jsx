@@ -1,4 +1,6 @@
-import { useState, useEffect } from "react";
+//A LO MEJOR NO NECESIO ESTO
+
+/*import { useState, useEffect } from "react";
 
 const CreatePlayer = () => {
     const [players, setPlayers] = useState([
@@ -228,4 +230,4 @@ const CreatePlayer = () => {
     );
 };
 
-export default CreatePlayer;
+export default CreatePlayer;*/
