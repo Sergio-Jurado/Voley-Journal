@@ -80,7 +80,7 @@ const CreatePlayer = () => {
             }
 
             setSuccess("Jugadores creados exitosamente");
-            setPlayers([{ name: "", lastName: "", number: "", position: "", nationality: "", photo: null, team: "" }]); // Reiniciar el formulario
+            setPlayers([{ name: "", lastName: "", number: "", position: "", nationality: "", photo: null, team: "" }]);
         } catch (error) {
             setError(error.message);
         }

@@ -7,7 +7,6 @@ const ShowTeam = ({ teamId }) => {
     const [error, setError] = useState(null);
     const navigate = useNavigate();
 
-    // Obtener los datos del equipo y sus jugadores
     useEffect(() => {
         fetch(`http://localhost:5000/api/teams/${teamId}`)
             .then((response) => {

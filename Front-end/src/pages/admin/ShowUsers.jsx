@@ -10,29 +10,20 @@ const ShowUsers = () => {
             .catch(error => console.error('Error fetching users:', error));
     }, []);
 
-    const changeRole = (userId, newRole) => {
-        fetch(`http://localhost:5000/api/users/update/${userId}`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ role: newRole }),
-        })
-            .then(response => response.json())
-            .then(data => {
-                setUsers(users.map(user => user.id === userId ? { ...user, role: newRole } : user));
-            })
-            .catch(error => console.error('Error changing role:', error));
-    };
-
     const deleteUser = (userId) => {
-        fetch(`http://localhost:5000/api/users/delete/${userId}/`, {
-            method: 'DELETE',
+        fetch(`http://localhost:5000/api/users/delete/${userId}`, {
+            method: "DELETE",
         })
-            .then(() => {
-                setUsers(users.filter(user => user.id !== userId));
+            .then((response) => {
+                if (!response.ok) {
+                    throw new Error("Error al eliminar el usuario");
+                }
+                return response.json();
             })
-            .catch(error => console.error('Error deleting user:', error));
+            .then(() => {
+                setUsers((prevUsers) => prevUsers.filter((user) => user._id !== userId));
+            })
+            .catch((error) => console.error("Error deleting user:", error));
     };
 
     return (
@@ -50,21 +41,15 @@ const ShowUsers = () => {
                 </thead>
                 <tbody>
                     {users.map(user => (
-                        <tr key={user.id} className="border-t">
+                        <tr key={user._id} className="border-t">
                             <td className="py-2">{user.username}</td>
                             <td className="py-2">{user.name}</td>
                             <td className="py-2">{user.lastName}</td>
                             <td className="py-2">{user.role}</td>
                             <td className="py-2">
                                 <button
-                                    className="bg-blue-500 text-white px-2 py-1 rounded mr-2"
-                                    onClick={() => changeRole(user.id, user.role === 'admin' ? 'user' : 'admin')}
-                                >
-                                    Cambiar Rol
-                                </button>
-                                <button
                                     className="bg-red-500 text-white px-2 py-1 rounded"
-                                    onClick={() => deleteUser(user.id)}
+                                    onClick={() => deleteUser(user._id)}
                                 >
                                     Eliminar
                                 </button>

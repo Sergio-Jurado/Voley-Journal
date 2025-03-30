@@ -7,7 +7,6 @@ const EditTeam = ({ teamId }) => {
     const [error, setError] = useState(null);
     const [success, setSuccess] = useState(null);
 
-    // Obtener los datos actuales del equipo
     useEffect(() => {
         fetch(`http://localhost:5000/api/teams/${teamId}`)
             .then((response) => {

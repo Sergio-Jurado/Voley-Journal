@@ -1,27 +1,25 @@
 import { useState } from "react";
 
 const CreateNews = () => {
-    const [newsTitle, setNewsTitle] = useState(""); // Título de la noticia
-    const [newsText, setNewsText] = useState(""); // Texto de la noticia
-    const [newsImage, setNewsImage] = useState(null); // Imagen de la noticia
-    const [newsImagePreview, setNewsImagePreview] = useState(null); // Vista previa de la imagen
-    const [error, setError] = useState(null); // Manejo de errores
-    const [success, setSuccess] = useState(null); // Manejo de éxito
+    const [newsTitle, setNewsTitle] = useState("");
+    const [newsText, setNewsText] = useState("");
+    const [newsImage, setNewsImage] = useState(null);
+    const [newsImagePreview, setNewsImagePreview] = useState(null);
+    const [error, setError] = useState(null);
+    const [success, setSuccess] = useState(null);
 
-    // Manejar el cambio de la imagen y generar la vista previa
     const handleImageChange = (e) => {
         const file = e.target.files[0];
         setNewsImage(file);
         if (file) {
             const reader = new FileReader();
             reader.onload = () => {
-                setNewsImagePreview(reader.result); // Generar la vista previa
+                setNewsImagePreview(reader.result);
             };
             reader.readAsDataURL(file);
         }
     };
 
-    // Manejar el envío del formulario
     const handleSubmit = async (e) => {
         e.preventDefault();
         setError(null);

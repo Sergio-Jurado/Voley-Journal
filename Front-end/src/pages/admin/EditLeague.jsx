@@ -6,7 +6,6 @@ const EditLeague = ({ leagueId }) => {
     const [error, setError] = useState(null);
     const [success, setSuccess] = useState(null);
 
-    // Obtener los datos actuales de la liga
     useEffect(() => {
         fetch(`http://localhost:5000/api/leagues/${leagueId}`)
             .then((response) => {

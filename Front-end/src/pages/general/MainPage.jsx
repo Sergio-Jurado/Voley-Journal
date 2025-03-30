@@ -1,37 +1,35 @@
 import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import LeagueSearch from "../../components/LeagueSearch";
 
 const MainPage = () => {
-    const [leagues, setLeagues] = useState([]); // Estado para almacenar todas las ligas
-    const [filteredLeagues, setFilteredLeagues] = useState([]); // Estado para almacenar las ligas filtradas
-    const [loading, setLoading] = useState(true); // Estado para manejar el estado de carga
+    const [leagues, setLeagues] = useState([]);
+    const [filteredLeagues, setFilteredLeagues] = useState([]);
+    const [loading, setLoading] = useState(true);
 
-    // Función para obtener las ligas desde el backend
     const fetchLeagues = async () => {
         try {
-            const response = await fetch("http://localhost:5000/api/leagues/get"); // Endpoint para obtener las ligas
+            const response = await fetch("http://localhost:5000/api/leagues/get");
             if (!response.ok) {
                 throw new Error("Error al obtener las ligas");
             }
             const data = await response.json();
-            setLeagues(data); // Guardar las ligas en el estado
-            setFilteredLeagues(data); // Inicialmente, todas las ligas están visibles
+            setLeagues(data);
+            setFilteredLeagues(data);
         } catch (err) {
-            console.error(err.message); // Manejar errores en la consola
+            console.error(err.message);
         } finally {
-            setLoading(false); // Finalizar el estado de carga
+            setLoading(false);
         }
     };
 
-    // Llamar a la función fetchLeagues cuando el componente se monte
     useEffect(() => {
         fetchLeagues();
     }, []);
 
-    // Función para manejar el término de búsqueda
     const handleSearch = (searchTerm) => {
         if (searchTerm === "") {
-            setFilteredLeagues(leagues); // Mostrar todas las ligas si no hay término de búsqueda
+            setFilteredLeagues(leagues);
         } else {
             const filtered = leagues.filter((league) =>
                 league.name.toLowerCase().includes(searchTerm.toLowerCase())
@@ -65,6 +63,12 @@ const MainPage = () => {
                                     <h2 className="text-xl font-bold text-gray-800">
                                         {league.name}
                                     </h2>
+                                    <Link
+                                        to={`/showLeague/${league._id}`}
+                                        className="mt-4 bg-blue-500 text-white py-2 px-4 rounded-lg hover:bg-blue-600 transition duration-200"
+                                    >
+                                        Ver Liga
+                                    </Link>
                                 </div>
                             ))}
                         </div>

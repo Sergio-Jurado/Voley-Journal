@@ -3,7 +3,7 @@ import { useState } from 'react';
 const CreateLeague = () => {
     const [leagueName, setLeagueName] = useState('');
     const [leagueLogo, setLeagueLogo] = useState(null);
-    const [leagueLogoPreview, setLeagueLogoPreview] = useState(null); // Para la vista previa del logo
+    const [leagueLogoPreview, setLeagueLogoPreview] = useState(null);
     const [teams, setTeams] = useState([{ name: '', logo: null }]);
     const [error, setError] = useState(null);
     const [success, setSuccess] = useState(null);
@@ -22,7 +22,7 @@ const CreateLeague = () => {
         if (file) {
             const reader = new FileReader();
             reader.onload = () => {
-                setLeagueLogoPreview(reader.result); // Generar la vista previa
+                setLeagueLogoPreview(reader.result);
             };
             reader.readAsDataURL(file);
         }
@@ -77,7 +77,7 @@ const CreateLeague = () => {
             setSuccess('Liga y equipos creados exitosamente');
             setLeagueName('');
             setLeagueLogo(null);
-            setLeagueLogoPreview(null); // Limpiar la vista previa
+            setLeagueLogoPreview(null);
             setTeams([{ name: '', logo: null }]);
         } catch (error) {
             setError(error.message);
@@ -85,7 +85,7 @@ const CreateLeague = () => {
     };
 
     return (
-        <div className="min-h-screen bg-gradient-to-b from-blue-600 to-blue-300 flex items-center justify-center">
+        <div className="min-h-screen flex items-center justify-center">
             <div className="p-10 bg-white shadow-md rounded-lg">
                 <h1 className="text-3xl font-bold text-center text-blue-600 mb-6">Crear Liga</h1>
                 <form onSubmit={handleSubmit} className="space-y-6">
