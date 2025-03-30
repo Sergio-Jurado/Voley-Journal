@@ -88,11 +88,16 @@ const updateUser = async (req, res) => {
 // Eliminar un usuario
 const deleteUser = async (req, res) => {
     try {
-        const user = await User.findByIdAndDelete(req.params.id);
-        if (!user) return res.status(404).json({ message: 'Usuario no encontrado' });
-        res.status(204).send();
+        const userId = req.params.id;
+        const deletedUser = await User.findByIdAndDelete(userId);
+
+        if (!deletedUser) {
+            return res.status(404).json({ message: "Usuario no encontrado" });
+        }
+
+        res.status(200).json({ message: "Usuario eliminado exitosamente" });
     } catch (error) {
-        res.status(500).json({ message: error.message });
+        res.status(500).json({ message: "Error al eliminar el usuario", error: error.message });
     }
 };
 

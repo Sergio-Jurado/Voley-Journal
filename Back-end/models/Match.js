@@ -17,6 +17,15 @@ const matchSchema = new mongoose.Schema({
         type: [Number],
         required: true
     },
+    league: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "League",
+        required: true,
+    },
+    date: {
+        type: Date,
+        default: null, // Puedes asignar fechas más adelante
+    },
 });
 
 module.exports = mongoose.model('Match', matchSchema);

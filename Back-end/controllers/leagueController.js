@@ -1,7 +1,6 @@
 const League = require('../models/League');
 const Team = require('../models/Team');
 const Player = require('../models/Player');
-const Matchday = require('../models/Matchday');
 const Match = require('../models/Match');
 const mongoose = require('mongoose');
 
@@ -121,10 +120,12 @@ exports.getLeagues = async (req, res) => {
 exports.getLeagueById = async (req, res) => {
     try {
         const league = await League.findById(req.params.id);
-        if (!league) return res.status(404).json({ message: 'Liga no encontrada' });
+        if (!league) {
+            return res.status(404).json({ message: "Liga no encontrada" });
+        }
         res.json(league);
-    } catch (err) {
-        res.status(500).json({ message: err.message });
+    } catch (error) {
+        res.status(500).json({ message: "Error al obtener la liga", error: error.message });
     }
 };
 

@@ -9,7 +9,6 @@ const teamRoutes = require('./routes/teamRoutes');
 const playersRoutes = require('./routes/playerRoutes');
 const leagueRoutes = require('./routes/leagueRoutes');
 const matchRoutes = require('./routes/matchRoutes');
-const matchdayRoutes = require('./routes/matchdayRoutes');
 
 dotenv.config();
 
@@ -33,7 +32,6 @@ app.use('/api/teams', teamRoutes);
 app.use('/api/players', playersRoutes);
 app.use('/api/leagues', leagueRoutes);
 app.use('/api/matches', matchRoutes);
-app.use('/api/matchdays', matchdayRoutes);
 
 app.get('/', (req, res) => {
     res.send('API funcionando correctamente');
