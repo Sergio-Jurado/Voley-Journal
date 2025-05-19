@@ -234,7 +234,7 @@ const AuthPage = () => {
             }}
         >
             {/* Encabezado */}
-            <h1 className="text-4xl font-bold  mb-10">Voley Journal</h1>
+            <h1 className="text-white text-4xl font-bold  mb-10">Voley Journal</h1>
 
             {/* Contenedor de componentes */}
             <div className="flex space-x-10">
