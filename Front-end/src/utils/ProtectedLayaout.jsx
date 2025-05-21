@@ -1,5 +1,5 @@
 import { Outlet } from "react-router-dom";
-import ProtectedRoute from "../utils/ProtectedRoute";
+import ProtectedRoute from "./ProtectedRoute";
 import { Header } from "../components/Header";
 
 const ProtectedLayout = () => {
