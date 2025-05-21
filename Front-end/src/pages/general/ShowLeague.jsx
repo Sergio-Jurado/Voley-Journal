@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
+import TeamCard from "../../components/TeamCard";
 
 const ShowLeague = () => {
     const { id } = useParams();
@@ -62,19 +63,7 @@ const ShowLeague = () => {
                 ) : (
                     <ul className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
                         {teams.map((team) => (
-                            <li
-                                key={team._id}
-                                className="bg-gray-100 p-4 rounded-lg shadow-md flex flex-col items-center"
-                            >
-                                {team.logo && (
-                                    <img
-                                        src={`http://localhost:5000/media/${team.logo}`}
-                                        alt={team.name}
-                                        className="w-20 h-20 object-cover rounded-full mb-2"
-                                    />
-                                )}
-                                <p className="text-lg font-medium text-gray-800">{team.name}</p>
-                            </li>
+                            <TeamCard key={team._id} team={team} />
                         ))}
                     </ul>
                 )}

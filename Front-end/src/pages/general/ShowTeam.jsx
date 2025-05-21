@@ -57,20 +57,11 @@ const ShowTeam = ({ teamId }) => {
             </div>
             <h2 className="text-xl font-bold mb-4">Jugadores</h2>
             {players.map((player) => (
-                <div key={player._id} className="mb-4 p-4 border border-gray-300 rounded">
-                    <h3 className="text-lg font-bold">
-                        {player.name} {player.lastName}
-                    </h3>
-                    <p>Número: {player.number}</p>
-                    <p>Posición: {player.position}</p>
-                    <p>Nacionalidad: {player.nationality}</p>
-                    <button
-                        onClick={() => handleEditPlayer(player._id)}
-                        className="bg-green-500 text-white py-2 px-4 rounded hover:bg-green-700 mt-2"
-                    >
-                        Editar Jugador
-                    </button>
-                </div>
+                <PlayerCard
+                key={player._id}
+                player={player}
+                onEdit={() => handleEditPlayer(player._id)}
+            />
             ))}
         </div>
     );

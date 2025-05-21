@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import NewsCard from "../../components/NewsCard";
 
 const ShowNews = () => {
     const [news, setNews] = useState([]);
@@ -40,25 +41,7 @@ const ShowNews = () => {
             ) : (
                 <div className="space-y-8">
                     {news.map((item) => (
-                        <div
-                            key={item._id}
-                            className="flex flex-col md:flex-row bg-gray-100 rounded-lg shadow-md overflow-hidden"
-                        >
-                            {item.image && (
-                                <div className="md:w-1/3">
-                                    <img
-                                        src={`http://localhost:5000/media/${item.image}`}
-                                        alt={item.title}
-                                        className="w-full h-48 object-cover md:h-full"
-                                    />
-                                </div>
-                            )}
-
-                            <div className="p-6 flex flex-col justify-between">
-                                <h2 className="text-2xl font-bold text-gray-800 mb-4">{item.title}</h2>
-                                <p className="text-gray-700 text-base mb-4">{item.text}</p>
-                            </div>
-                        </div>
+                        <NewsCard key={item._id} newsItem={item} />
                     ))}
                 </div>
             )}
