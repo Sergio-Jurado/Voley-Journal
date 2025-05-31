@@ -16,7 +16,11 @@ const newSchema = new mongoose.Schema({
     League: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'League'
-    }
+    },
+    createdBy: {
+        type: String,
+        required: true
+    },
 });
 
 module.exports = mongoose.model('News', newSchema);

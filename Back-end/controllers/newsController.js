@@ -3,14 +3,14 @@ const News = require('../models/News');
 // Crear un nuevo artículo
 const createNews = async (req, res) => {
     try {
-        const { title, text, league } = req.body;
+        const { title, text, createdBy } = req.body;
         const image = req.file ? req.file.filename : null;
 
         if (!image) {
             return res.status(400).json({ message: 'La imagen es obligatoria' });
         }
 
-        const newArticle = new News({ title, text, image, League: league });
+        const newArticle = new News({ title, text, image, createdBy });
         await newArticle.save();
         res.status(201).json(newArticle);
     } catch (error) {

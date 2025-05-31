@@ -10,6 +10,11 @@ const teamSchema = new mongoose.Schema({
         required: true,
         trim: true
     },
+    coach: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User',
+        required: true
+    }],
     players: [{
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Player',
