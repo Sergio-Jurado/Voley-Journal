@@ -1,16 +1,20 @@
-//A LO MEJOR NO NECESIO ESTO
-
-/*import { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 
 const CreatePlayer = () => {
-    const [players, setPlayers] = useState([
-        { name: "", lastName: "", number: "", position: "", nationality: "", photo: null, team: "" }
-    ]); // Lista de jugadores
-    const [teams, setTeams] = useState([]); // Lista de equipos disponibles
-    const [error, setError] = useState(null); // Manejo de errores
-    const [success, setSuccess] = useState(null); // Manejo de éxito
+    const [player, setPlayer] = useState({
+        name: "",
+        lastName: "",
+        number: "",
+        position: "",
+        nationality: "",
+        photo: null,
+        team: ""
+    });
+    const [teams, setTeams] = useState([]);
+    const [error, setError] = useState(null);
+    const [success, setSuccess] = useState(null);
+    const [photoPreview, setPhotoPreview] = useState(null);
 
-    // Obtener la lista de equipos desde el backend
     useEffect(() => {
         const fetchTeams = async () => {
             try {
@@ -24,134 +28,111 @@ const CreatePlayer = () => {
                 console.error(err.message);
             }
         };
-
         fetchTeams();
     }, []);
 
-    // Manejar el cambio de los datos del jugador
-    const handlePlayerChange = (index, field, value) => {
-        const updatedPlayers = [...players];
-        updatedPlayers[index][field] = value;
-        setPlayers(updatedPlayers);
+    const handlePlayerChange = (field, value) => {
+        setPlayer(prev => ({ ...prev, [field]: value }));
     };
 
-    // Manejar el cambio de la foto del jugador
-    const handlePhotoChange = (index, file) => {
-        const updatedPlayers = [...players];
-        updatedPlayers[index].photo = file;
-        setPlayers(updatedPlayers);
+    const handlePhotoChange = (file) => {
+        setPlayer(prev => ({ ...prev, photo: file }));
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = () => setPhotoPreview(reader.result);
+            reader.readAsDataURL(file);
+        } else {
+            setPhotoPreview(null);
+        }
     };
 
-    // Añadir un nuevo jugador
-    const handleAddPlayer = () => {
-        setPlayers([
-            ...players,
-            { name: "", lastName: "", number: "", position: "", nationality: "", photo: null, team: "" }
-        ]);
-    };
-
-    // Manejar el envío del formulario
     const handleSubmit = async (e) => {
         e.preventDefault();
         setError(null);
         setSuccess(null);
 
         try {
-            for (const player of players) {
-                if (!player.name || !player.lastName || !player.number || !player.position || !player.nationality || !player.photo || !player.team) {
-                    throw new Error("Todos los campos son obligatorios para cada jugador");
-                }
-
-                const formData = new FormData();
-                formData.append("name", player.name);
-                formData.append("lastName", player.lastName);
-                formData.append("number", player.number);
-                formData.append("position", player.position);
-                formData.append("nationality", player.nationality);
-                formData.append("team", player.team);
-                formData.append("photo", player.photo);
-
-                const response = await fetch("http://localhost:5000/api/players/create", {
-                    method: "POST",
-                    body: formData,
-                });
-
-                if (!response.ok) {
-                    throw new Error("Error al crear un jugador");
-                }
+            const { name, lastName, number, position, nationality, photo, team } = player;
+            if (!name || !lastName || !number || !position || !nationality || !photo || !team) {
+                throw new Error("Todos los campos son obligatorios");
             }
 
-            setSuccess("Jugadores creados exitosamente");
-            setPlayers([{ name: "", lastName: "", number: "", position: "", nationality: "", photo: null, team: "" }]);
+            const formData = new FormData();
+            formData.append("name", name);
+            formData.append("lastName", lastName);
+            formData.append("number", number);
+            formData.append("position", position);
+            formData.append("nationality", nationality);
+            formData.append("team", team);
+            formData.append("photo", photo);
+
+            const response = await fetch("http://localhost:5000/api/players/create", {
+                method: "POST",
+                body: formData,
+            });
+
+            if (!response.ok) {
+                throw new Error("Error al crear el jugador");
+            }
+
+            setSuccess("Jugador creado exitosamente");
+            setPlayer({
+                name: "",
+                lastName: "",
+                number: "",
+                position: "",
+                nationality: "",
+                photo: null,
+                team: ""
+            });
+            setPhotoPreview(null);
         } catch (error) {
             setError(error.message);
         }
     };
 
     return (
-        <div className="max-w-4xl mx-auto p-6 bg-white shadow-md rounded-lg">
-            <h1 className="text-3xl font-bold text-center text-blue-600 mb-6">Crear Jugadores</h1>
+        <div className="max-w-xl mx-auto p-8 bg-white shadow-2xl rounded-2xl border border-blue-100 mt-10">
+            <h1 className="text-3xl font-black text-center text-blue-700 mb-8 tracking-tight drop-shadow">Crear Jugador</h1>
             <form onSubmit={handleSubmit} className="space-y-6">
-                {players.map((player, index) => (
-                    <div
-                        key={index}
-                        className="border border-gray-300 p-4 rounded-lg bg-gray-50 shadow-sm mb-4"
-                    >
-                        <h3 className="text-xl font-bold text-gray-700 mb-4">
-                            Jugador {index + 1}
-                        </h3>
+                <div className="flex flex-col md:flex-row gap-8">
+                    <div className="flex-1">
                         <div className="mb-4">
-                            <label className="block text-lg font-medium text-gray-700 mb-2">
-                                Nombre
-                            </label>
+                            <label className="block text-lg font-semibold text-blue-900 mb-2">Nombre</label>
                             <input
                                 type="text"
                                 value={player.name}
-                                onChange={(e) =>
-                                    handlePlayerChange(index, "name", e.target.value)
-                                }
-                                className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                onChange={e => handlePlayerChange("name", e.target.value)}
+                                className="w-full p-3 border border-blue-200 rounded-lg focus:ring-2 focus:ring-blue-400 outline-none"
                                 placeholder="Introduce el nombre del jugador"
                             />
                         </div>
                         <div className="mb-4">
-                            <label className="block text-lg font-medium text-gray-700 mb-2">
-                                Apellido
-                            </label>
+                            <label className="block text-lg font-semibold text-blue-900 mb-2">Apellido</label>
                             <input
                                 type="text"
                                 value={player.lastName}
-                                onChange={(e) =>
-                                    handlePlayerChange(index, "lastName", e.target.value)
-                                }
-                                className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                onChange={e => handlePlayerChange("lastName", e.target.value)}
+                                className="w-full p-3 border border-blue-200 rounded-lg focus:ring-2 focus:ring-blue-400 outline-none"
                                 placeholder="Introduce el apellido del jugador"
                             />
                         </div>
                         <div className="mb-4">
-                            <label className="block text-lg font-medium text-gray-700 mb-2">
-                                Número
-                            </label>
+                            <label className="block text-lg font-semibold text-blue-900 mb-2">Número</label>
                             <input
                                 type="number"
                                 value={player.number}
-                                onChange={(e) =>
-                                    handlePlayerChange(index, "number", e.target.value)
-                                }
-                                className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                onChange={e => handlePlayerChange("number", e.target.value)}
+                                className="w-full p-3 border border-blue-200 rounded-lg focus:ring-2 focus:ring-blue-400 outline-none"
                                 placeholder="Introduce el número del jugador"
                             />
                         </div>
                         <div className="mb-4">
-                            <label className="block text-lg font-medium text-gray-700 mb-2">
-                                Posición
-                            </label>
+                            <label className="block text-lg font-semibold text-blue-900 mb-2">Posición</label>
                             <select
                                 value={player.position}
-                                onChange={(e) =>
-                                    handlePlayerChange(index, "position", e.target.value)
-                                }
-                                className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                onChange={e => handlePlayerChange("position", e.target.value)}
+                                className="w-full p-3 border border-blue-200 rounded-lg focus:ring-2 focus:ring-blue-400 outline-none"
                             >
                                 <option value="">Selecciona una posición</option>
                                 <option value="Setter">Setter</option>
@@ -162,29 +143,21 @@ const CreatePlayer = () => {
                             </select>
                         </div>
                         <div className="mb-4">
-                            <label className="block text-lg font-medium text-gray-700 mb-2">
-                                Nacionalidad
-                            </label>
+                            <label className="block text-lg font-semibold text-blue-900 mb-2">Nacionalidad</label>
                             <input
                                 type="text"
                                 value={player.nationality}
-                                onChange={(e) =>
-                                    handlePlayerChange(index, "nationality", e.target.value)
-                                }
-                                className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                onChange={e => handlePlayerChange("nationality", e.target.value)}
+                                className="w-full p-3 border border-blue-200 rounded-lg focus:ring-2 focus:ring-blue-400 outline-none"
                                 placeholder="Introduce la nacionalidad del jugador"
                             />
                         </div>
                         <div className="mb-4">
-                            <label className="block text-lg font-medium text-gray-700 mb-2">
-                                Equipo
-                            </label>
+                            <label className="block text-lg font-semibold text-blue-900 mb-2">Equipo</label>
                             <select
                                 value={player.team}
-                                onChange={(e) =>
-                                    handlePlayerChange(index, "team", e.target.value)
-                                }
-                                className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                onChange={e => handlePlayerChange("team", e.target.value)}
+                                className="w-full p-3 border border-blue-200 rounded-lg focus:ring-2 focus:ring-blue-400 outline-none"
                             >
                                 <option value="">Selecciona un equipo</option>
                                 {teams.map((team) => (
@@ -194,25 +167,43 @@ const CreatePlayer = () => {
                                 ))}
                             </select>
                         </div>
-                        <div>
-                            <label className="block text-lg font-medium text-gray-700 mb-2">
-                                Foto del Jugador
-                            </label>
+                        <div className="mb-4">
+                            <label className="block text-lg font-semibold text-blue-900 mb-2">Foto del Jugador</label>
                             <input
                                 type="file"
-                                onChange={(e) => handlePhotoChange(index, e.target.files[0])}
-                                className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                onChange={e => handlePhotoChange(e.target.files[0])}
+                                className="w-full p-3 border border-blue-200 rounded-lg bg-blue-50"
                             />
                         </div>
                     </div>
-                ))}
-                <button
-                    type="button"
-                    onClick={handleAddPlayer}
-                    className="mt-4 bg-green-500 text-white py-2 px-4 rounded-lg hover:bg-green-600 transition duration-200"
-                >
-                    Añadir Jugador
-                </button>
+                    <div className="flex flex-col items-center justify-center flex-1">
+                        <div className="w-40 h-40 rounded-full bg-blue-100 flex items-center justify-center mb-4 border-4 border-blue-200 shadow">
+                            {photoPreview ? (
+                                <img
+                                    src={photoPreview}
+                                    alt="Preview"
+                                    className="w-full h-full object-cover rounded-full"
+                                />
+                            ) : (
+                                <span className="text-5xl text-blue-300 font-bold">?</span>
+                            )}
+                        </div>
+                        <div className="text-center">
+                            <span className="block text-xl font-bold text-blue-800">
+                                {player.name || "Nombre"} {player.lastName || "Apellido"}
+                            </span>
+                            <span className="block text-blue-600 font-semibold">
+                                {player.position || "Posición"}
+                            </span>
+                            <span className="block text-blue-400">
+                                {player.nationality || "Nacionalidad"}
+                            </span>
+                            <span className="block text-blue-400">
+                                {player.number ? `#${player.number}` : "#"}
+                            </span>
+                        </div>
+                    </div>
+                </div>
                 {error && (
                     <div className="text-red-500 text-center font-medium">{error}</div>
                 )}
@@ -221,13 +212,13 @@ const CreatePlayer = () => {
                 )}
                 <button
                     type="submit"
-                    className="w-full bg-blue-500 text-white py-3 rounded-lg hover:bg-blue-600 transition duration-200"
+                    className="w-full bg-gradient-to-r from-blue-500 to-blue-700 text-white py-3 rounded-lg font-bold text-lg shadow hover:from-blue-600 hover:to-blue-800 transition"
                 >
-                    Crear Jugadores
+                    Crear Jugador
                 </button>
             </form>
         </div>
     );
 };
 
-export default CreatePlayer;*/
+export default CreatePlayer;

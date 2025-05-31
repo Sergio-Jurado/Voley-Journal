@@ -36,7 +36,7 @@ function Login() {
                 const data = await response.json();
                 console.log(data);
                 localStorage.setItem('token', data.token);
-                navigate("/");
+                navigate("/main");
 
                 console.log('Inicio de sesión exitoso:', { username, password });
             } catch (error) {
@@ -94,12 +94,13 @@ function Register() {
     const [username, setUserName] = useState('');
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
+    const [role, setRole] = useState('coach');
     const [error, setError] = useState(null);
     const [response, setResponse] = useState(null);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        if (name === '' || lastname === '' || username === '' || password === '' || confirmPassword === '') {
+        if (name === '' || lastname === '' || username === '' || password === '' || confirmPassword === '' || !role) {
             setError('Por favor, completa todos los campos');
         } else if (password !== confirmPassword) {
             setError('Las contraseñas no coinciden');
@@ -114,7 +115,8 @@ function Register() {
                         username: username,
                         password: password,
                         name: name,
-                        lastName: lastname
+                        lastName: lastname,
+                        role: role
                     })
                 });
 
@@ -129,6 +131,7 @@ function Register() {
                     setUserName("");
                     setPassword("");
                     setConfirmPassword("");
+                    setRole("coach");
                     setError(null);
                 }
 
@@ -156,7 +159,7 @@ function Register() {
                 />
             </div>
             <div className="mb-4">
-                <label className="block text-white text-sm font-bold mb-2" htmlFor="name">
+                <label className="block text-white text-sm font-bold mb-2" htmlFor="lastname">
                     Apellidos
                 </label>
                 <input
@@ -168,7 +171,7 @@ function Register() {
                 />
             </div>
             <div className="mb-4">
-                <label className="block text-white text-sm font-bold mb-2" htmlFor="name">
+                <label className="block text-white text-sm font-bold mb-2" htmlFor="username">
                     Nombre de usuario
                 </label>
                 <input
@@ -178,6 +181,20 @@ function Register() {
                     value={username}
                     onChange={(e) => setUserName(e.target.value)}
                 />
+            </div>
+            <div className="mb-4">
+                <label className="block text-white text-sm font-bold mb-2" htmlFor="role">
+                    ¿Qué eres?
+                </label>
+                <select
+                    id="role"
+                    value={role}
+                    onChange={(e) => setRole(e.target.value)}
+                    className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                >
+                    <option value="coach">Entrenador</option>
+                    <option value="journalist">Periodista</option>
+                </select>
             </div>
             <div className="mb-4">
                 <label className="block text-white text-sm font-bold mb-2" htmlFor="password">

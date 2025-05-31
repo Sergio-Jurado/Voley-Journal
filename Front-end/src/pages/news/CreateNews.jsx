@@ -1,12 +1,38 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 const CreateNews = () => {
     const [newsTitle, setNewsTitle] = useState("");
     const [newsText, setNewsText] = useState("");
     const [newsImage, setNewsImage] = useState(null);
+    const [createdBy, setCreatedBy] = useState("");
     const [newsImagePreview, setNewsImagePreview] = useState(null);
     const [error, setError] = useState(null);
     const [success, setSuccess] = useState(null);
+
+    // Obtener el id del usuario (token) de localStorage
+    const token = localStorage.getItem("token");
+
+    useEffect(() => {
+        const fetchUser = async () => {
+            if (token) {
+                try {
+                    const response = await fetch(`http://localhost:5000/api/users/getby/${token}`);
+                    if (response.ok) {
+                        const user = await response.json();
+                        setCreatedBy(user.username); // Guardar el username
+                    } else {
+                        setCreatedBy("");
+                    }
+                } catch (error) {
+                    console.error("Error al obtener el usuario:", error);
+                    setCreatedBy("");
+                }
+            } else {
+                setCreatedBy("");
+            }
+        };
+        fetchUser();
+    }, [token]);
 
     const handleImageChange = (e) => {
         const file = e.target.files[0];
@@ -25,15 +51,18 @@ const CreateNews = () => {
         setError(null);
         setSuccess(null);
 
-        try {
-            if (!newsTitle || !newsText || !newsImage) {
-                throw new Error("Todos los campos son obligatorios");
-            }
+        // Asegúrate de que createdBy tiene valor
+        if (!newsTitle || !newsText || !newsImage || !createdBy) {
+            setError("Todos los campos son obligatorios");
+            return;
+        }
 
+        try {
             const formData = new FormData();
             formData.append("title", newsTitle);
             formData.append("text", newsText);
             formData.append("image", newsImage);
+            formData.append("createdBy", createdBy); // username
 
             const response = await fetch("http://localhost:5000/api/news/create", {
                 method: "POST",
@@ -49,10 +78,20 @@ const CreateNews = () => {
             setNewsText("");
             setNewsImage(null);
             setNewsImagePreview(null);
+            // NO limpiar createdBy aquí
         } catch (error) {
             setError(error.message);
         }
     };
+
+    // Mostrar mensaje de carga si aún no tienes el username
+    if (!createdBy) {
+        return (
+            <div className="flex items-center justify-center min-h-screen">
+                <span className="text-blue-600 text-xl font-semibold">Cargando usuario...</span>
+            </div>
+        );
+    }
 
     return (
         <div className="max-w-4xl mx-auto p-6 bg-white shadow-md rounded-lg">
@@ -88,27 +127,27 @@ const CreateNews = () => {
                 </div>
                 <div>
                     <h2 className="text-2xl font-semibold text-gray-800 mb-4">Vista Previa</h2>
-                    <div className="border border-gray-300 p-4 rounded-lg bg-gray-50 flex flex-col md:flex-row items-center">
+                    <div className="flex flex-col md:flex-row bg-white rounded-xl shadow-lg overflow-hidden border border-gray-200 hover:shadow-2xl transition-shadow duration-300">
                         {newsImagePreview && (
-                            <img
-                                src={newsImagePreview}
-                                alt="Vista previa"
-                                className="w-full md:w-1/3 h-48 object-cover rounded-lg mb-4 md:mb-0 md:mr-4"
-                            />
+                            <div className="md:w-1/3 flex-shrink-0">
+                                <img
+                                    src={newsImagePreview}
+                                    alt={newsTitle}
+                                    className="w-full h-56 object-cover md:h-full"
+                                />
+                            </div>
                         )}
-                        <div className="flex-1">
-                            <h3
-                                className="text-2xl font-bold text-gray-800 mb-2 truncate"
-                                style={{ wordWrap: "break-word" }}
-                            >
+                        <div className="p-6 flex flex-col justify-between md:w-2/3">
+                            <h2 className="text-2xl font-extrabold text-blue-700 mb-2">
                                 {newsTitle || "Título de la noticia"}
-                            </h3>
-                            <p
-                                className="text-gray-700 text-lg"
-                                style={{ wordWrap: "break-word" }}
-                            >
+                            </h2>
+                            <hr className="mb-4 border-blue-200" />
+                            <p className="text-gray-700 text-base mb-4 leading-relaxed">
                                 {newsText || "Texto de la noticia"}
                             </p>
+                            <span className="text-sm text-gray-500">
+                                Publicado por: {createdBy || "Tu usuario"}
+                            </span>
                         </div>
                     </div>
                 </div>
@@ -120,6 +159,7 @@ const CreateNews = () => {
                 )}
                 <button
                     type="submit"
+                    disabled={!createdBy}
                     className="w-full bg-blue-500 text-white py-3 rounded-lg hover:bg-blue-600 transition duration-200"
                 >
                     Crear Noticia

@@ -5,7 +5,7 @@ const useLogout = () => {
 
     const logout = () => {
         localStorage.clear(); // Limpia todo el localStorage.
-        navigate('/auth'); // Redirige a la página de login
+        navigate('/main'); // Redirige a la página de login
     };
 
     return logout;
