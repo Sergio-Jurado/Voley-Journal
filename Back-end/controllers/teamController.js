@@ -1,34 +1,34 @@
 const Team = require('../models/Team');
 const League = require('../models/League');
+const User = require('../models/User');
 
 // Crear un nuevo equipo
 const createTeam = async (req, res) => {
     try {
-        const { name, idLeague } = req.body;
+        const { name, coach } = req.body;
         const logo = req.file ? req.file.filename : null;
 
         if (!name) {
             return res.status(400).json({ message: 'El nombre del equipo es obligatorio' });
         }
 
-        if (!idLeague) {
-            return res.status(400).json({ message: 'El ID de la liga es obligatorio' });
+        if (!coach) {
+            return res.status(400).json({ message: 'El nombre del entrenador es obligatorio' });
         }
 
         if (!logo) {
             return res.status(400).json({ message: 'El logo del equipo es obligatorio' });
         }
 
-        const league = await League.findById(idLeague);
-        if (!league) {
-            return res.status(404).json({ message: 'Liga no encontrada' });
-        }
-
-        const team = new Team({ name, logo, idLeague });
+        const team = new Team({ name, logo, coach });
         await team.save();
 
-        league.teams.push(team._id);
-        await league.save();
+        // Añadir el equipo al usuario (entrenador)
+        const user = await User.findOne({ username: coach });
+        if (user) {
+            user.team = team._id;
+            await user.save();
+        }
 
         res.status(201).json({ message: 'Equipo creado exitosamente', team });
     } catch (error) {
@@ -57,6 +57,20 @@ const getTeamById = async (req, res) => {
     }
 };
 
+const getTeamByCoach = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const user = await User.findById(id).populate({
+            path: 'team',
+            populate: { path: 'players' }
+        });
+        if (!user || !user.team) return res.json({});
+        res.json(user.team);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
 // Actualizar un equipo
 const updateTeam = async (req, res) => {
     try {
@@ -79,4 +93,4 @@ const deleteTeam = async (req, res) => {
     }
 };
 
-module.exports = { createTeam, getAllTeams, getTeamById, updateTeam, deleteTeam };
+module.exports = { createTeam, getAllTeams, getTeamById, updateTeam, deleteTeam, getTeamByCoach };

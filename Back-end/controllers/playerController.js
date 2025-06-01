@@ -5,10 +5,11 @@ const Team = require('../models/Team'); // Importar el modelo Team
 const createPlayer = async (req, res) => {
     try {
         const { name, lastName, number, position, nationality, team } = req.body;
-        const newPlayer = new Player({ name, lastName, number, position, nationality, team });
+        const image = req.file ? req.file.filename : null; // Si usas multer
+
+        const newPlayer = new Player({ name, lastName, number, position, nationality, team, image });
         await newPlayer.save();
 
-        // Si se proporciona un equipo, agregar el jugador al equipo
         if (team) {
             await Team.findByIdAndUpdate(team, { $addToSet: { players: newPlayer._id } });
         }

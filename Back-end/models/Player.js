@@ -29,7 +29,11 @@ const playerSchema = new mongoose.Schema({
     team: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Team'
-    }
+    },
+    image: {
+        type: String,
+        required: true
+    },
 });
 
 module.exports = mongoose.model('Player', playerSchema);
