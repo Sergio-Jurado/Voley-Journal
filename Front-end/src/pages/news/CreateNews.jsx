@@ -146,7 +146,7 @@ const CreateNews = () => {
                                 {newsText || "Texto de la noticia"}
                             </p>
                             <span className="text-sm text-gray-500">
-                                Publicado por: {createdBy || "Tu usuario"}
+                                Publicado por: {createdBy || "Periodista"}
                             </span>
                         </div>
                     </div>

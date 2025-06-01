@@ -1,30 +1,25 @@
-const PlayerCard = ({ player, onEdit }) => {
+const PlayerCard = ({ player }) => {
     return (
-        <div className="mb-6 p-6 bg-white rounded-xl shadow-md border border-gray-200 hover:shadow-xl transition-shadow duration-300 flex flex-col items-center">
-            <div className="flex flex-col items-center mb-4">
-                <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mb-2">
-                    <span className="text-2xl font-bold text-blue-700">
-                        {player.number}
-                    </span>
-                </div>
-                <h3 className="text-xl font-extrabold text-blue-800 text-center">
+        <div className="relative bg-blue-50 rounded-2xl shadow-xl p-5 flex flex-row items-center border-2 border-blue-200 hover:shadow-2xl transition-shadow duration-300">
+            {player.image && (
+                <img
+                    src={`http://localhost:5000/media/${player.image}`}
+                    alt={`${player.name} ${player.lastName}`}
+                    className="w-20 h-20 object-cover rounded-full border-4 border-blue-400 shadow-md mr-6"
+                />
+            )}
+            <div className="flex-1">
+                <h2 className="text-2xl font-extrabold text-blue-700 mb-1 tracking-tight">
                     {player.name} {player.lastName}
-                </h3>
+                </h2>
+                <div className="flex items-center gap-3 mb-2">
+                    <span className="bg-blue-100 text-blue-700 font-bold px-3 py-1 rounded-full text-lg shadow">
+                        #{player.number}
+                    </span>
+                    <span className="text-blue-500 font-semibold">{player.position}</span>
+                </div>
+                <p className="text-sm text-blue-900 font-medium">{player.nationality}</p>
             </div>
-            <div className="text-center mb-4">
-                <p className="text-gray-700">
-                    <span className="font-semibold">Posición:</span> {player.position}
-                </p>
-                <p className="text-gray-700">
-                    <span className="font-semibold">Nacionalidad:</span> {player.nationality}
-                </p>
-            </div>
-            <button
-                onClick={onEdit}
-                className="bg-green-500 text-white py-2 px-6 rounded-lg hover:bg-green-600 transition-colors duration-200"
-            >
-                Editar Jugador
-            </button>
         </div>
     );
 };

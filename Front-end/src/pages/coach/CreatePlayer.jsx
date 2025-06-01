@@ -7,42 +7,45 @@ const CreatePlayer = () => {
         number: "",
         position: "",
         nationality: "",
-        photo: null,
+        image: null,
         team: ""
     });
-    const [teams, setTeams] = useState([]);
     const [error, setError] = useState(null);
     const [success, setSuccess] = useState(null);
-    const [photoPreview, setPhotoPreview] = useState(null);
+    const [imagePreview, setImagePreview] = useState(null);
 
+    // Obtener el id del usuario (token) de localStorage
+    const token = localStorage.getItem("token"); // token debe ser el _id del usuario
+
+    // Obtener el equipo del entrenador
     useEffect(() => {
-        const fetchTeams = async () => {
+        const fetchTeam = async () => {
             try {
-                const response = await fetch("http://localhost:5000/api/teams");
-                if (!response.ok) {
-                    throw new Error("Error al obtener los equipos");
-                }
+                const response = await fetch(`http://localhost:5000/api/teams/getbycoach/${token}`);
+                if (!response.ok) throw new Error("Error al obtener el equipo");
                 const data = await response.json();
-                setTeams(data);
+                if (data && data._id) {
+                    setPlayer(prev => ({ ...prev, team: data._id }));
+                }
             } catch (err) {
-                console.error(err.message);
+                setError("No se pudo obtener tu equipo. Crea un equipo antes de añadir jugadores.");
             }
         };
-        fetchTeams();
-    }, []);
+        if (token) fetchTeam();
+    }, [token]);
 
     const handlePlayerChange = (field, value) => {
         setPlayer(prev => ({ ...prev, [field]: value }));
     };
 
-    const handlePhotoChange = (file) => {
-        setPlayer(prev => ({ ...prev, photo: file }));
+    const handleImageChange = (file) => {
+        setPlayer(prev => ({ ...prev, image: file }));
         if (file) {
             const reader = new FileReader();
-            reader.onload = () => setPhotoPreview(reader.result);
+            reader.onload = () => setImagePreview(reader.result);
             reader.readAsDataURL(file);
         } else {
-            setPhotoPreview(null);
+            setImagePreview(null);
         }
     };
 
@@ -52,8 +55,8 @@ const CreatePlayer = () => {
         setSuccess(null);
 
         try {
-            const { name, lastName, number, position, nationality, photo, team } = player;
-            if (!name || !lastName || !number || !position || !nationality || !photo || !team) {
+            const { name, lastName, number, position, nationality, image, team } = player;
+            if (!name || !lastName || !number || !position || !nationality || !image || !team) {
                 throw new Error("Todos los campos son obligatorios");
             }
 
@@ -64,7 +67,7 @@ const CreatePlayer = () => {
             formData.append("position", position);
             formData.append("nationality", nationality);
             formData.append("team", team);
-            formData.append("photo", photo);
+            formData.append("image", image);
 
             const response = await fetch("http://localhost:5000/api/players/create", {
                 method: "POST",
@@ -82,12 +85,13 @@ const CreatePlayer = () => {
                 number: "",
                 position: "",
                 nationality: "",
-                photo: null,
-                team: ""
+                image: null,
+                team: team // Mantén el equipo para crear más jugadores
             });
-            setPhotoPreview(null);
+            setImagePreview(null);
         } catch (error) {
             setError(error.message);
+            console.error("Error al crear el jugador:", error);
         }
     };
 
@@ -153,34 +157,19 @@ const CreatePlayer = () => {
                             />
                         </div>
                         <div className="mb-4">
-                            <label className="block text-lg font-semibold text-blue-900 mb-2">Equipo</label>
-                            <select
-                                value={player.team}
-                                onChange={e => handlePlayerChange("team", e.target.value)}
-                                className="w-full p-3 border border-blue-200 rounded-lg focus:ring-2 focus:ring-blue-400 outline-none"
-                            >
-                                <option value="">Selecciona un equipo</option>
-                                {teams.map((team) => (
-                                    <option key={team._id} value={team._id}>
-                                        {team.name}
-                                    </option>
-                                ))}
-                            </select>
-                        </div>
-                        <div className="mb-4">
                             <label className="block text-lg font-semibold text-blue-900 mb-2">Foto del Jugador</label>
                             <input
                                 type="file"
-                                onChange={e => handlePhotoChange(e.target.files[0])}
+                                onChange={e => handleImageChange(e.target.files[0])}
                                 className="w-full p-3 border border-blue-200 rounded-lg bg-blue-50"
                             />
                         </div>
                     </div>
                     <div className="flex flex-col items-center justify-center flex-1">
                         <div className="w-40 h-40 rounded-full bg-blue-100 flex items-center justify-center mb-4 border-4 border-blue-200 shadow">
-                            {photoPreview ? (
+                            {imagePreview ? (
                                 <img
-                                    src={photoPreview}
+                                    src={imagePreview}
                                     alt="Preview"
                                     className="w-full h-full object-cover rounded-full"
                                 />

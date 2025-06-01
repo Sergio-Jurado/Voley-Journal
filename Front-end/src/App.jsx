@@ -6,11 +6,13 @@ import CreateNews from "./pages/news/CreateNews";
 import ShowLeague from "./pages/general/ShowLeague";
 import ShowNews from "./pages/general/ShowNews";
 import ShowUsers from "./pages/admin/ShowUsers";
-import CreatePlayer from "./pages/admin/CreatePlayer";
+import CreatePlayer from "./pages/coach/CreatePlayer";
 import ProtectedLayout from "./utils/ProtectedLayaout";
 import PublicLayaout from "./utils/PublicLayaout";
 import ControlPanel from "./pages/admin/ControlPanel";
 import LandingPage from "./pages/general/LandingPage";
+import MyTeam from "./pages/coach/MyTeam";
+import CreateTeam from "./pages/coach/CreateTeam";
 
 function App() {
   return (
@@ -20,17 +22,18 @@ function App() {
         <Route path="/auth" element={<AuthPage />} />
         {/* Ruta pública */}
         <Route element={<PublicLayaout />}>
-
           <Route path="/main" element={<MainPage />} />
+          <Route path="/showLeague/:id" element={<ShowLeague />} />
           <Route path="/news" element={<ShowNews />} />
         </Route>
         {/* Rutas protegidas */}
         <Route element={<ProtectedLayout />}>
+          <Route path="/myTeam" element={<MyTeam />} />
+          <Route path="/createTeam" element={<CreateTeam />} />
           <Route path="/controlPanel" element={<ControlPanel />} />
           <Route path="/createLeague" element={<CreateLeague />} />
           <Route path="/showUsers" element={<ShowUsers />} />
           <Route path="/createNews" element={<CreateNews />} />
-          <Route path="/showLeague/:id" element={<ShowLeague />} />
           <Route path="/createPlayer" element={<CreatePlayer />} />
         </Route>
       </Routes>
