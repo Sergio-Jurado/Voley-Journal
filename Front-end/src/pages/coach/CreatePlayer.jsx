@@ -96,7 +96,7 @@ const CreatePlayer = () => {
     };
 
     return (
-        <div className="max-w-xl mx-auto p-8 bg-white shadow-2xl rounded-2xl border border-blue-100 mt-10">
+        <div className="max-w-7xl mx-auto p-8 bg-white shadow-2xl rounded-2xl border border-blue-100 ">
             <h1 className="text-3xl font-black text-center text-blue-700 mb-8 tracking-tight drop-shadow">Crear Jugador</h1>
             <form onSubmit={handleSubmit} className="space-y-6">
                 <div className="flex flex-col md:flex-row gap-8">

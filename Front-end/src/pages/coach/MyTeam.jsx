@@ -64,7 +64,7 @@ const MyTeam = () => {
     }
 
     return (
-        <div className="max-w-8xl mx-auto mt-10 p-8 bg-gradient-to-b from-blue-200 to-blue-50 rounded-2xl shadow-2xl border border-blue-100">
+        <div className="max-w-8xl mx-auto p-8 bg-gradient-to-b from-blue-200 to-blue-50 rounded-2xl shadow-2xl border border-blue-100">
             {/* Imagen y nombre del club alineados horizontalmente */}
             <div className="flex items-center justify-center mb-8 gap-6 flex-wrap">
                 {team.logo && (
