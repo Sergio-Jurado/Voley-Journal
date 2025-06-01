@@ -1,4 +1,8 @@
 const User = require('../models/User');
+const Team = require('../models/Team');
+const Player = require('../models/Player');
+const League = require('../models/League');
+const News = require('../models/News');
 const bcrypt = require('bcrypt');
 
 // Crear un nuevo usuario
@@ -88,16 +92,38 @@ const updateUser = async (req, res) => {
 // Eliminar un usuario
 const deleteUser = async (req, res) => {
     try {
-        const userId = req.params.id;
-        const deletedUser = await User.findByIdAndDelete(userId);
+        const user = await User.findById(req.params.id);
 
-        if (!deletedUser) {
-            return res.status(404).json({ message: "Usuario no encontrado" });
+        if (!user) return res.status(404).json({ message: "Usuario no encontrado" });
+
+        if (user.role === "coach") {
+            // Eliminar equipo y jugadores
+            const team = await Team.findOne({ coach: user.username });
+            if (team) {
+                // Eliminar jugadores del equipo
+                await Player.deleteMany({ team: team._id });
+                // Eliminar equipo de las ligas
+                await League.updateMany(
+                    { teams: team._id },
+                    { $pull: { teams: team._id } }
+                );
+                // Eliminar el equipo
+                await Team.deleteOne({ _id: team._id });
+            }
         }
 
-        res.status(200).json({ message: "Usuario eliminado exitosamente" });
+        if (user.role === "journalist") {
+            // Eliminar noticias del periodista
+            await News.deleteMany({ author: user._id });
+            await News.deleteMany({ createdBy: user.username });
+        }
+
+        // Finalmente, eliminar el usuario
+        await User.deleteOne({ _id: user._id });
+
+        res.json({ message: "Usuario y datos relacionados eliminados correctamente" });
     } catch (error) {
-        res.status(500).json({ message: "Error al eliminar el usuario", error: error.message });
+        res.status(500).json({ message: error.message });
     }
 };
 

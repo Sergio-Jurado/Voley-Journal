@@ -71,6 +71,19 @@ const getTeamByCoach = async (req, res) => {
     }
 };
 
+const getManyTeams = async (req, res) => {
+    try {
+        const { teamIds } = req.body;
+        if (!Array.isArray(teamIds) || teamIds.length === 0) {
+            return res.status(400).json({ message: "Debes enviar un array de IDs de equipos" });
+        }
+        const teams = await Team.find({ _id: { $in: teamIds } }).select("name logo");
+        res.status(200).json(teams);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
 // Actualizar un equipo
 const updateTeam = async (req, res) => {
     try {
@@ -93,4 +106,4 @@ const deleteTeam = async (req, res) => {
     }
 };
 
-module.exports = { createTeam, getAllTeams, getTeamById, updateTeam, deleteTeam, getTeamByCoach };
+module.exports = { createTeam, getAllTeams, getTeamById, updateTeam, deleteTeam, getTeamByCoach, getManyTeams };

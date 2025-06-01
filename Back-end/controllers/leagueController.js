@@ -38,6 +38,43 @@ exports.createLeague = async (req, res) => {
     }
 };
 
+// Añadir un solo equipo a una liga
+exports.addTeamToLeague = async (req, res) => {
+    try {
+        const { teamId } = req.body;
+        const leagueId = req.params.leagueId;
+
+        // Buscar la liga
+        const league = await League.findById(leagueId);
+        if (!league) {
+            return res.status(404).json({ message: "Liga no encontrada" });
+        }
+
+        // Buscar el equipo
+        const team = await Team.findById(teamId);
+        if (!team) {
+            return res.status(404).json({ message: "Equipo no encontrado" });
+        }
+
+        // Verificar si el equipo ya está inscrito
+        if (league.teams.includes(teamId)) {
+            return res.status(400).json({ message: "El equipo ya está inscrito en la liga" });
+        }
+
+        // Añadir el equipo a la liga
+        league.teams.push(teamId);
+        await league.save();
+
+        // Asociar la liga al equipo
+        team.idLeague = leagueId;
+        await team.save();
+
+        res.status(200).json({ message: "Equipo inscrito correctamente en la liga", league });
+    } catch (error) {
+        res.status(500).json({ message: "Error al inscribir el equipo en la liga", error: error.message });
+    }
+};
+
 // Asociar equipos a una liga existente y generar enfrentamientos
 exports.addTeamsToLeague = async (req, res) => {
     const session = await mongoose.startSession();
