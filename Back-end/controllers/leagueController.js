@@ -4,16 +4,6 @@ const Player = require('../models/Player');
 const Match = require('../models/Match');
 const mongoose = require('mongoose');
 
-function generateRoundRobin(teams) {
-    let result = [];
-    for (let i = 0; i < teams.length; i++) {
-        for (let j = i + 1; j < teams.length; j++) {
-            result.push([teams[i], teams[j]]);
-        }
-    }
-    return result;
-}
-
 // Crear una nueva liga
 exports.createLeague = async (req, res) => {
     try {
@@ -75,72 +65,61 @@ exports.addTeamToLeague = async (req, res) => {
     }
 };
 
-// Asociar equipos a una liga existente y generar enfrentamientos
-exports.addTeamsToLeague = async (req, res) => {
+
+function generateRoundRobin(teams) {
+    let result = [];
+    for (let i = 0; i < teams.length; i++) {
+        for (let j = i + 1; j < teams.length; j++) {
+            result.push([teams[i], teams[j]]);
+        }
+    }
+    return result;
+}
+
+// Generar enfrentamientos
+
+exports.startLeague = async (req, res) => {
     const session = await mongoose.startSession();
     session.startTransaction();
     try {
-        const { leagueId, teamIds } = req.body;
-
-        if (teamIds.length > 12) {
-            return res.status(400).json({ message: 'Una liga puede tener hasta 12 equipos.' });
-        }
-
-        const league = await League.findById(leagueId);
+        const { leagueId } = req.body;
+        const league = await League.findById(leagueId).session(session);
         if (!league) {
-            return res.status(404).json({ message: 'Liga no encontrada' });
+            await session.abortTransaction();
+            session.endSession();
+            return res.status(404).json({ message: "Liga no encontrada" });
         }
 
-        for (const teamId of teamIds) {
-            const team = await Team.findById(teamId);
-            if (!team) {
-                return res.status(404).json({ message: `Equipo con ID ${teamId} no encontrado` });
-            }
-            team.idLeague = leagueId;
-            await team.save({ session });
+        if (!league.teams || league.teams.length < 2) {
+            await session.abortTransaction();
+            session.endSession();
+            return res.status(400).json({ message: "La liga debe tener al menos 2 equipos para empezar." });
         }
 
-        league.teams = teamIds;
-        await league.save({ session });
+        // Generar partidos todos contra todos
+        const matchesArr = generateRoundRobin(league.teams);
 
-        // Generar enfrentamientos
-        await generateMatches(leagueId, teamIds, session);
+        // Crear los partidos en la base de datos
+        for (const [homeTeam, awayTeam] of matchesArr) {
+            const match = new Match({
+                league: league._id,
+                homeTeam,
+                awayTeam,
+                setsHome: 0,
+                setsAway: 0,
+                date: new Date() // Puedes personalizar la fecha
+            });
+            await match.save({ session });
+        }
 
         await session.commitTransaction();
         session.endSession();
-
-        res.status(201).json({ message: 'Equipos añadidos exitosamente a la liga y enfrentamientos generados', league });
+        res.status(200).json({ message: "La liga ha comenzado y los partidos han sido generados." });
     } catch (error) {
         await session.abortTransaction();
         session.endSession();
-        res.status(500).json({ message: 'Error al añadir los equipos a la liga', error });
+        res.status(500).json({ message: "Error al iniciar la liga", error: error.message });
     }
-};
-
-// Generar enfrentamientos
-const generateMatches = async (leagueId, teamIds, session) => {
-    const matchdays = [];
-    const teamCombination = generateRoundRobin(teamIds);
-
-    for (let i = 0; i < teamCombination.length; i++) {
-        const match = new Match({
-            homeTeam: teamCombination[i][0],
-            awayTeam: teamCombination[i][1],
-            setsHome: 0,
-            setsAway: 0,
-            date: new Date() // Puedes ajustar la fecha según sea necesario
-        });
-        await match.save({ session });
-
-        const matchday = new Matchday({
-            date: new Date(), // Puedes ajustar la fecha según sea necesario
-            matches: [match._id]
-        });
-        await matchday.save({ session });
-        matchdays.push(matchday._id);
-    }
-
-    await League.findByIdAndUpdate(leagueId, { matchdays }, { session });
 };
 
 // Obtener todas las ligas

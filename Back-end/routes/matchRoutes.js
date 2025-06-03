@@ -8,5 +8,6 @@ router.get("/get", matchController.getMatches);
 router.get("/getby/:id", matchController.getMatchById);
 router.put("/update/:id", matchController.updateMatch);
 router.delete("/delete:id", matchController.deleteMatch);
+router.get("/byLeague/:leagueId", matchController.getMatchesByLeague);
 
 module.exports = router;

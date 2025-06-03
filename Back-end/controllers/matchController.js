@@ -1,4 +1,4 @@
-const Match = require("../models/Match");
+const Match = require('../models/Match');
 
 // Crear un partido
 const createMatch = async (req, res) => {
@@ -82,5 +82,16 @@ const deleteMatch = async (req, res) => {
     }
 };
 
+const getMatchesByLeague = async (req, res) => {
+    try {
+        const matches = await Match.find({ league: req.params.leagueId })
+            .populate('homeTeam')
+            .populate('awayTeam');
+        res.json(matches);
+    } catch (err) {
+        res.status(500).json({ message: err.message });
+    }
+};
+
 // Exportar todas las funciones
-module.exports = { createMatch, getMatches, getMatchById, updateMatch, deleteMatch, };
+module.exports = { createMatch, getMatches, getMatchById, updateMatch, deleteMatch, getMatchesByLeague };

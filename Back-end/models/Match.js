@@ -9,12 +9,18 @@ const matchSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Team'
     },
-    homeSets: {
-        type: [Number],
+    setsHome: {
+        type: Number,
+        min: 0,
+        max: 3,
+        default: 0,
         required: true
     },
-    awaySets: {
-        type: [Number],
+    setsAway: {
+        type: Number,
+        min: 0,
+        max: 3,
+        default: 0,
         required: true
     },
     league: {
