@@ -28,7 +28,14 @@ const ShowLeague = () => {
     const [matches, setMatches] = useState([]);
     const [loading, setLoading] = useState(false);
     const [editScores, setEditScores] = useState({});
-    const [isFinished, setIsFinished] = useState(false); // NUEVO: estado de liga finalizada
+    const [isFinished, setIsFinished] = useState(false);
+
+    // NUEVO: Estados para edición de liga
+    const [editMode, setEditMode] = useState(false);
+    const [editName, setEditName] = useState("");
+    const [editLogo, setEditLogo] = useState(null);
+    const [editPreview, setEditPreview] = useState(null);
+    const [saving, setSaving] = useState(false);
 
     // PAGINACIÓN DE PARTIDOS
     const [matchesPage, setMatchesPage] = useState(0);
@@ -203,6 +210,57 @@ const ShowLeague = () => {
         }
     };
 
+    // ----------- EDICIÓN DE LIGA (ADMIN) -----------
+    const startEdit = () => {
+        setEditName(league.name);
+        setEditLogo(null);
+        setEditPreview(null);
+        setEditMode(true);
+    };
+
+    const handleLogoChange = (e) => {
+        const file = e.target.files[0];
+        setEditLogo(file);
+        if (file) {
+            const reader = new FileReader();
+            reader.onloadend = () => setEditPreview(reader.result);
+            reader.readAsDataURL(file);
+        } else {
+            setEditPreview(null);
+        }
+    };
+
+    const handleEditLeague = async (e) => {
+        e.preventDefault();
+        setSaving(true);
+        const formData = new FormData();
+        formData.append("name", editName);
+        if (editLogo) formData.append("logo", editLogo);
+
+        try {
+            const res = await fetch(`http://localhost:5000/api/leagues/update/${league._id}`, {
+                method: "PUT",
+                body: formData,
+            });
+            if (res.ok) {
+                // Refresca la liga tras editar
+                const updatedRes = await fetch(`http://localhost:5000/api/leagues/getby/${league._id}`);
+                if (updatedRes.ok) {
+                    const updatedLeague = await updatedRes.json();
+                    setLeague(updatedLeague);
+                }
+                setEditMode(false);
+                setMessage("Liga actualizada correctamente.");
+            } else {
+                setMessage("No se pudo actualizar la liga.");
+            }
+        } catch {
+            setMessage("Error al actualizar la liga.");
+        }
+        setSaving(false);
+    };
+    // -----------------------------------------------
+
     if (!league) {
         return <div className="text-center py-10 text-blue-700 font-bold">Cargando liga...</div>;
     }
@@ -234,14 +292,84 @@ const ShowLeague = () => {
 
     return (
         <div className="max-w-8xl mx-auto mt-10 p-8 bg-gradient-to-b from-blue-100 to-blue-50 rounded-2xl shadow-2xl border border-blue-200">
-            <h1 className="text-4xl font-black text-blue-700 mb-4 text-center">{league.name}</h1>
-            <div className="flex justify-center mb-8">
-                <img
-                    src={`http://localhost:5000/media/${league.logo}`}
-                    alt={league.name}
-                    className="w-32 h-32 object-cover rounded-full border-4 border-blue-300 shadow-lg"
-                />
+            {/* EDICIÓN DE LIGA (ADMIN) */}
+            <div className="flex items-center justify-center mb-8 gap-6 flex-wrap">
+                {(editMode ? (editPreview || league.logo) : league.logo) && (
+                    <img
+                        src={editMode ? (editPreview || `http://localhost:5000/media/${league.logo}`) : `http://localhost:5000/media/${league.logo}`}
+                        alt={league.name}
+                        className="w-32 h-32 object-cover rounded-full border-4 border-blue-300 shadow-lg"
+                    />
+                )}
+                {editMode ? (
+                    <input
+                        type="text"
+                        className="text-3xl font-black text-blue-700 drop-shadow text-center border-b-2 border-blue-400 bg-blue-50 px-2 py-1 rounded"
+                        value={editName}
+                        onChange={e => setEditName(e.target.value)}
+                        maxLength={40}
+                    />
+                ) : (
+                    <h1 className="text-4xl font-black text-blue-700 mb-4 text-center">{league.name}</h1>
+                )}
             </div>
+            {isAuthenticated && role === "admin" && !editMode && (
+                <div className="flex justify-center mb-4">
+                    <button
+                        onClick={startEdit}
+                        className="flex items-center gap-2 bg-gradient-to-r from-yellow-400 to-yellow-600 hover:from-yellow-500 hover:to-yellow-700 text-white px-6 py-2 rounded-xl font-bold shadow transition-all duration-200"
+                    >
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.232 5.232l3.536 3.536M9 13l6-6m2 2l-6 6m2 2l-6 6m2 2l-6 6" />
+                        </svg>
+                        Editar liga
+                    </button>
+                </div>
+            )}
+            {isAuthenticated && role === "admin" && editMode && (
+                <form onSubmit={handleEditLeague} className="max-w-md mx-auto mb-8 bg-white rounded-xl shadow p-6 flex flex-col gap-4 border border-blue-100">
+                    <label className="font-semibold text-blue-800">
+                        Nombre de la liga:
+                        <input
+                            type="text"
+                            className="block w-full mt-1 border border-blue-300 rounded px-3 py-2"
+                            value={editName}
+                            onChange={e => setEditName(e.target.value)}
+                            maxLength={40}
+                            required
+                        />
+                    </label>
+                    <label className="font-semibold text-blue-800">
+                        Logo de la liga:
+                        <input
+                            type="file"
+                            accept="image/*"
+                            className="block w-full mt-1"
+                            onChange={handleLogoChange}
+                        />
+                    </label>
+                    {editPreview && (
+                        <img src={editPreview} alt="Previsualización" className="w-24 h-24 object-cover rounded-full border-2 border-blue-300 mx-auto" />
+                    )}
+                    <div className="flex gap-4 justify-center mt-2">
+                        <button
+                            type="submit"
+                            disabled={saving}
+                            className="bg-gradient-to-r from-green-500 to-green-700 text-white px-6 py-2 rounded-xl font-bold shadow hover:from-green-700 hover:to-green-900 transition"
+                        >
+                            {saving ? "Guardando..." : "Guardar cambios"}
+                        </button>
+                        <button
+                            type="button"
+                            onClick={() => setEditMode(false)}
+                            className="bg-gray-300 hover:bg-gray-400 text-gray-800 px-6 py-2 rounded-xl font-bold shadow"
+                        >
+                            Cancelar
+                        </button>
+                    </div>
+                </form>
+            )}
+
             <p className="text-lg text-blue-900 font-semibold text-center mb-6">{league.description}</p>
 
             {/* Mostrar equipos inscritos */}
@@ -267,13 +395,6 @@ const ShowLeague = () => {
                                     />
                                 </div>
                                 <span className="font-bold text-blue-900 text-base text-center">{t.name}</span>
-                                <button
-                                    onClick={() => t._id && navigate(`/showTeam/${t._id}`)}
-                                    className="mt-2 px-4 py-2 bg-blue-500 text-white rounded-xl font-bold shadow hover:bg-blue-700 transition"
-                                    disabled={!t._id}
-                                >
-                                    Ver equipo
-                                </button>
                             </li>
                         ))}
                     </ul>

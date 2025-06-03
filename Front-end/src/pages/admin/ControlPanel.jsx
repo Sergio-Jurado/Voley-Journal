@@ -13,19 +13,17 @@ const ControlPanel = () => {
                 >
                     Crear Liga
                 </button>
-                {/*
-<button
-    onClick={() => navigate('/editLeague')}
-    className="w-full md:w-auto bg-gradient-to-r from-yellow-400 to-yellow-600 text-white py-3 px-8 rounded-lg font-bold text-lg shadow hover:from-yellow-500 hover:to-yellow-700 transition"
->
-    Editar Liga
-</button>
-*/}
                 <button
                     onClick={() => navigate('/showUsers')}
                     className="w-full md:w-auto bg-gradient-to-r from-green-500 to-green-700 text-white py-3 px-8 rounded-lg font-bold text-lg shadow hover:from-green-600 hover:to-green-800 transition"
                 >
                     Ver Usuarios
+                </button>
+                <button
+                    onClick={() => navigate('/deleteLeague')}
+                    className="w-full md:w-auto bg-gradient-to-r from-red-500 to-red-700 text-white py-3 px-8 rounded-lg font-bold text-lg shadow hover:from-red-600 hover:to-red-900 transition"
+                >
+                    Eliminar Liga
                 </button>
             </div>
         </div>

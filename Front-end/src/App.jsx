@@ -14,6 +14,7 @@ import LandingPage from "./pages/general/LandingPage";
 import MyTeam from "./pages/coach/MyTeam";
 import CreateTeam from "./pages/coach/CreateTeam";
 import ShowTeam from "./pages/general/ShowTeam";
+import DeleteLeague from "./pages/admin/DeleteLeague";
 
 function App() {
   return (
@@ -35,6 +36,7 @@ function App() {
           <Route path="/controlPanel" element={<ControlPanel />} />
           <Route path="/createLeague" element={<CreateLeague />} />
           <Route path="/showUsers" element={<ShowUsers />} />
+          <Route path="/deleteLeague" element={<DeleteLeague />} />
           <Route path="/createNews" element={<CreateNews />} />
           <Route path="/createPlayer" element={<CreatePlayer />} />
         </Route>

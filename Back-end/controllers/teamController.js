@@ -87,7 +87,12 @@ const getManyTeams = async (req, res) => {
 // Actualizar un equipo
 const updateTeam = async (req, res) => {
     try {
-        const team = await Team.findByIdAndUpdate(req.params.id, req.body, { new: true });
+        const update = {};
+        if (req.body.name) update.name = req.body.name;
+        if (req.file) update.logo = req.file.filename;
+
+        // Si no usas multer, req.file será undefined y solo se actualizará el nombre
+        const team = await Team.findByIdAndUpdate(req.params.id, update, { new: true }).populate('players');
         if (!team) return res.status(404).json({ message: 'Equipo no encontrado' });
         res.status(200).json(team);
     } catch (error) {

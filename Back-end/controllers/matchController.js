@@ -93,5 +93,14 @@ const getMatchesByLeague = async (req, res) => {
     }
 };
 
+const deleteMatchesByLeague = async (req, res) => {
+    try {
+        const result = await Match.deleteMany({ league: req.params.leagueId });
+        res.status(200).json({ message: "Partidos eliminados correctamente", deletedCount: result.deletedCount });
+    } catch (error) {
+        res.status(500).json({ message: "Error al eliminar los partidos de la liga", error });
+    }
+};
+
 // Exportar todas las funciones
-module.exports = { createMatch, getMatches, getMatchById, updateMatch, deleteMatch, getMatchesByLeague };
+module.exports = { createMatch, getMatches, getMatchById, updateMatch, deleteMatch, getMatchesByLeague, deleteMatchesByLeague };

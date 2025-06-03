@@ -7,7 +7,7 @@ router.post('/create', upload.single('teamLogo'), createTeam);
 router.get('/get', getAllTeams);
 router.get('/getby/:id', getTeamById);
 router.get('/getbycoach/:id', getTeamByCoach);
-router.put('/update/:id', updateTeam);
+router.put('/update/:id', upload.single('logo'), updateTeam);
 router.delete('/delete/:id', deleteTeam);
 router.post('/getmany', getManyTeams);
 

@@ -6,6 +6,11 @@ const MyTeam = () => {
     const [team, setTeam] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    const [editMode, setEditMode] = useState(false);
+    const [editName, setEditName] = useState("");
+    const [editLogo, setEditLogo] = useState(null);
+    const [editPreview, setEditPreview] = useState(null);
+    const [saving, setSaving] = useState(false);
     const navigate = useNavigate();
 
     // Obtener el id del usuario (token) de localStorage
@@ -52,6 +57,58 @@ const MyTeam = () => {
         }
     };
 
+    // Función para guardar cambios del equipo
+    const handleEditTeam = async (e) => {
+        e.preventDefault();
+        setSaving(true);
+        const formData = new FormData();
+        formData.append("name", editName);
+        if (editLogo) formData.append("logo", editLogo);
+
+        try {
+            const res = await fetch(`http://localhost:5000/api/teams/update/${team._id}`, {
+                method: "PUT",
+                body: formData,
+            });
+            if (res.ok) {
+                setTimeout(async () => {
+                    const updatedRes = await fetch(`http://localhost:5000/api/teams/getbycoach/${token}`);
+                    if (updatedRes.ok) {
+                        const updatedTeam = await updatedRes.json();
+                        setTeam(updatedTeam);
+                    }
+                    setEditMode(false);
+                }, 500); // 500ms de espera
+            } else {
+                alert("No se pudo actualizar el equipo.");
+            }
+        } catch {
+            alert("Error al actualizar el equipo.");
+        }
+        setSaving(false);
+    };
+
+    // Al entrar en modo edición, inicializa los valores
+    const startEdit = () => {
+        setEditName(team.name);
+        setEditLogo(null);
+        setEditPreview(null);
+        setEditMode(true);
+    };
+
+    // Previsualización de imagen
+    const handleLogoChange = (e) => {
+        const file = e.target.files[0];
+        setEditLogo(file);
+        if (file) {
+            const reader = new FileReader();
+            reader.onloadend = () => setEditPreview(reader.result);
+            reader.readAsDataURL(file);
+        } else {
+            setEditPreview(null);
+        }
+    };
+
     if (loading) {
         return (
             <div className="flex items-center justify-center min-h-[40vh]">
@@ -88,15 +145,83 @@ const MyTeam = () => {
         <div className="max-w-8xl mx-auto p-8 bg-gradient-to-b from-blue-200 to-blue-50 rounded-2xl shadow-2xl border border-blue-100">
             {/* Imagen y nombre del club alineados horizontalmente */}
             <div className="flex items-center justify-center mb-8 gap-6 flex-wrap">
-                {team.logo && (
+                {(editMode ? (editPreview || team.logo) : team.logo) && (
                     <img
-                        src={`http://localhost:5000/media/${team.logo}`}
+                        src={editMode ? (editPreview || `http://localhost:5000/media/${team.logo}`) : `http://localhost:5000/media/${team.logo}`}
                         alt={team.name}
                         className="w-32 h-32 object-cover rounded-full border-4 border-blue-300 shadow-lg"
                     />
                 )}
-                <h1 className="text-4xl font-black text-blue-700 drop-shadow text-center">{team.name}</h1>
+                {editMode ? (
+                    <input
+                        type="text"
+                        className="text-3xl font-black text-blue-700 drop-shadow text-center border-b-2 border-blue-400 bg-blue-50 px-2 py-1 rounded"
+                        value={editName}
+                        onChange={e => setEditName(e.target.value)}
+                        maxLength={40}
+                    />
+                ) : (
+                    <h1 className="text-4xl font-black text-blue-700 drop-shadow text-center">{team.name}</h1>
+                )}
             </div>
+            {/* Botón editar equipo solo si eres el entrenador */}
+            {!editMode && (
+                <div className="flex justify-center mb-4">
+                    <button
+                        onClick={startEdit}
+                        className="flex items-center gap-2 bg-gradient-to-r from-yellow-400 to-yellow-600 hover:from-yellow-500 hover:to-yellow-700 text-white px-6 py-2 rounded-xl font-bold shadow transition-all duration-200"
+                    >
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.232 5.232l3.536 3.536M9 13l6-6m2 2l-6 6m2 2l-6 6m2 2l-6 6" />
+                        </svg>
+                        Editar equipo
+                    </button>
+                </div>
+            )}
+            {/* Formulario de edición */}
+            {editMode && (
+                <form onSubmit={handleEditTeam} className="max-w-md mx-auto mb-8 bg-white rounded-xl shadow p-6 flex flex-col gap-4 border border-blue-100">
+                    <label className="font-semibold text-blue-800">
+                        Nombre del equipo:
+                        <input
+                            type="text"
+                            className="block w-full mt-1 border border-blue-300 rounded px-3 py-2"
+                            value={editName}
+                            onChange={e => setEditName(e.target.value)}
+                            maxLength={40}
+                            required
+                        />
+                    </label>
+                    <label className="font-semibold text-blue-800">
+                        Logo del equipo:
+                        <input
+                            type="file"
+                            accept="image/*"
+                            className="block w-full mt-1"
+                            onChange={handleLogoChange}
+                        />
+                    </label>
+                    {editPreview && (
+                        <img src={editPreview} alt="Previsualización" className="w-24 h-24 object-cover rounded-full border-2 border-blue-300 mx-auto" />
+                    )}
+                    <div className="flex gap-4 justify-center mt-2">
+                        <button
+                            type="submit"
+                            disabled={saving}
+                            className="bg-gradient-to-r from-green-500 to-green-700 text-white px-6 py-2 rounded-xl font-bold shadow hover:from-green-700 hover:to-green-900 transition"
+                        >
+                            {saving ? "Guardando..." : "Guardar cambios"}
+                        </button>
+                        <button
+                            type="button"
+                            onClick={() => setEditMode(false)}
+                            className="bg-gray-300 hover:bg-gray-400 text-gray-800 px-6 py-2 rounded-xl font-bold shadow"
+                        >
+                            Cancelar
+                        </button>
+                    </div>
+                </form>
+            )}
             {/* Nombre del entrenador */}
             <p className="text-lg text-blue-900 font-semibold text-center mb-6">
                 Entrenador: {team.coach}

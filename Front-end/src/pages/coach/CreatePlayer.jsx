@@ -28,6 +28,7 @@ const CreatePlayer = () => {
                     setPlayer(prev => ({ ...prev, team: data._id }));
                 }
             } catch (err) {
+                console.error("Error fetching team:", err);
                 setError("No se pudo obtener tu equipo. Crea un equipo antes de añadir jugadores.");
             }
         };

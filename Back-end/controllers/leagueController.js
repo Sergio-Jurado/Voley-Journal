@@ -148,7 +148,11 @@ exports.getLeagueById = async (req, res) => {
 // Actualizar una liga
 exports.updateLeague = async (req, res) => {
     try {
-        const updatedLeague = await League.findByIdAndUpdate(req.params.id, req.body, { new: true });
+        const update = {};
+        if (req.body.name) update.name = req.body.name;
+        if (req.file) update.logo = req.file.filename;
+
+        const updatedLeague = await League.findByIdAndUpdate(req.params.id, update, { new: true });
         if (!updatedLeague) return res.status(404).json({ message: 'Liga no encontrada' });
         res.json(updatedLeague);
     } catch (err) {
