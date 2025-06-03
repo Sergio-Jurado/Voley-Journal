@@ -13,6 +13,7 @@ import ControlPanel from "./pages/admin/ControlPanel";
 import LandingPage from "./pages/general/LandingPage";
 import MyTeam from "./pages/coach/MyTeam";
 import CreateTeam from "./pages/coach/CreateTeam";
+import ShowTeam from "./pages/general/ShowTeam";
 
 function App() {
   return (
@@ -22,6 +23,7 @@ function App() {
         <Route path="/auth" element={<AuthPage />} />
         {/* Ruta pública */}
         <Route element={<PublicLayaout />}>
+          <Route path="/showTeam/:teamId" element={<ShowTeam />} />
           <Route path="/main" element={<MainPage />} />
           <Route path="/showLeague/:id" element={<ShowLeague />} />
           <Route path="/news" element={<ShowNews />} />

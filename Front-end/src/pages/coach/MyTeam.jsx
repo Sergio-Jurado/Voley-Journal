@@ -31,6 +31,27 @@ const MyTeam = () => {
         else setLoading(false);
     }, [token]);
 
+    // Función para eliminar jugador
+    const handleDeletePlayer = async (playerId, playerName) => {
+        if (window.confirm(`¿Seguro que quieres eliminar a ${playerName}?`)) {
+            try {
+                const res = await fetch(`http://localhost:5000/api/players/delete/${playerId}`, {
+                    method: "DELETE",
+                });
+                if (res.ok) {
+                    setTeam(prev => ({
+                        ...prev,
+                        players: prev.players.filter(p => p._id !== playerId)
+                    }));
+                } else {
+                    alert("No se pudo eliminar el jugador.");
+                }
+            } catch {
+                alert("Error al eliminar el jugador.");
+            }
+        }
+    };
+
     if (loading) {
         return (
             <div className="flex items-center justify-center min-h-[40vh]">
@@ -80,7 +101,6 @@ const MyTeam = () => {
             <p className="text-lg text-blue-900 font-semibold text-center mb-6">
                 Entrenador: {team.coach}
             </p>
-            {/* ...el resto de tu código permanece igual... */}
             {(!team.players || team.players.length === 0) ? (
                 <div className="flex flex-col items-center mt-8">
                     <p className="mb-4 text-lg text-gray-700 font-medium">
@@ -99,7 +119,19 @@ const MyTeam = () => {
                     <h2 className="text-2xl font-bold text-blue-800 mt-10 mb-6 text-center tracking-wide">Jugadores</h2>
                     <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8">
                         {team.players.map((player) => (
-                            <PlayerCard key={player._id} player={player} />
+                            <div key={player._id} className="relative">
+                                <PlayerCard player={player} />
+                                <button
+                                    onClick={() => handleDeletePlayer(player._id, player.name)}
+                                    className="absolute top-2 right-2 flex items-center gap-1 bg-gradient-to-r from-red-500 to-red-700 hover:from-red-700 hover:to-red-900 text-white px-4 py-2 rounded-full font-bold shadow-lg text-xs transition-all duration-200 border-2 border-white/80 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-red-400"
+                                    title="Eliminar jugador"
+                                >
+                                    <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                                    </svg>
+                                    Eliminar jugador
+                                </button>
+                            </div>
                         ))}
                     </div>
                     {team.players.length < 12 && (
