@@ -3,23 +3,41 @@ const Team = require('../models/Team');
 const Player = require('../models/Player');
 const Match = require('../models/Match');
 const mongoose = require('mongoose');
+const cloudinary = require('../cloudinary');
+const streamifier = require('streamifier');
+
+// Función auxiliar para subir a Cloudinary
+async function uploadToCloudinary(fileBuffer) {
+    return new Promise((resolve, reject) => {
+        const stream = cloudinary.uploader.upload_stream(
+            { resource_type: 'image' },
+            (error, result) => {
+                if (result) resolve(result.secure_url);
+                else reject(error);
+            }
+        );
+        streamifier.createReadStream(fileBuffer).pipe(stream);
+    });
+}
 
 // Crear una nueva liga
 exports.createLeague = async (req, res) => {
     try {
-        const { name } = req.body; // El nombre de la liga enviado en el campo 'name'
-        const logo = req.file ? req.file.filename : null; // El archivo subido en el campo 'leagueLogo'
+        const { name } = req.body;
 
         if (!name) {
             return res.status(400).json({ message: 'El nombre de la liga es obligatorio' });
         }
 
-        if (!logo) {
+        if (!req.file) {
             return res.status(400).json({ message: 'El logo de la liga es obligatorio' });
         }
 
+        // Subir imagen a Cloudinary
+        const logoUrl = await uploadToCloudinary(req.file.buffer);
+
         // Crear la liga en la base de datos
-        const league = new League({ name, logo });
+        const league = new League({ name, logo: logoUrl });
         await league.save();
 
         res.status(201).json({ message: 'Liga creada exitosamente', league });
@@ -65,7 +83,6 @@ exports.addTeamToLeague = async (req, res) => {
     }
 };
 
-
 function generateRoundRobin(teams) {
     let result = [];
     for (let i = 0; i < teams.length; i++) {
@@ -77,7 +94,6 @@ function generateRoundRobin(teams) {
 }
 
 // Generar enfrentamientos
-
 exports.startLeague = async (req, res) => {
     const session = await mongoose.startSession();
     session.startTransaction();
@@ -150,7 +166,11 @@ exports.updateLeague = async (req, res) => {
     try {
         const update = {};
         if (req.body.name) update.name = req.body.name;
-        if (req.file) update.logo = req.file.filename;
+
+        if (req.file) {
+            // Subir nueva imagen a Cloudinary
+            update.logo = await uploadToCloudinary(req.file.buffer);
+        }
 
         const updatedLeague = await League.findByIdAndUpdate(req.params.id, update, { new: true });
         if (!updatedLeague) return res.status(404).json({ message: 'Liga no encontrada' });

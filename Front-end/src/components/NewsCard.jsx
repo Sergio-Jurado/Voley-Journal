@@ -26,7 +26,7 @@ const NewsCard = ({ newsItem, onDelete }) => {
             {newsItem.image && (
                 <div className="md:w-1/3 flex-shrink-0">
                     <img
-                        src={`https://voley-journal.onrender.com/media/${newsItem.image}`}
+                        src={newsItem.image}
                         alt={newsItem.title}
                         className="w-full h-56 object-cover md:h-full"
                     />

@@ -59,7 +59,7 @@ const DeleteLeague = () => {
                         <li key={league._id} className="flex items-center justify-between bg-blue-50 rounded-lg p-4 shadow border border-blue-100">
                             <div className="flex items-center gap-4">
                                 <img
-                                    src={`https://voley-journal.onrender.com/media/${league.logo}`}
+                                    src={league.logo}
                                     alt={league.name}
                                     className="w-14 h-14 object-cover rounded-full border-2 border-blue-300"
                                 />

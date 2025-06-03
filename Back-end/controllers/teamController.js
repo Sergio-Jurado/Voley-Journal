@@ -1,12 +1,28 @@
 const Team = require('../models/Team');
 const League = require('../models/League');
 const User = require('../models/User');
+const cloudinary = require('../cloudinary');
+const streamifier = require('streamifier');
+
+// Función auxiliar para subir a Cloudinary
+async function uploadToCloudinary(fileBuffer) {
+    return new Promise((resolve, reject) => {
+        const stream = cloudinary.uploader.upload_stream(
+            { resource_type: 'image' },
+            (error, result) => {
+                if (result) resolve(result.secure_url);
+                else reject(error);
+            }
+        );
+        streamifier.createReadStream(fileBuffer).pipe(stream);
+    });
+}
 
 // Crear un nuevo equipo
 const createTeam = async (req, res) => {
     try {
         const { name, coach } = req.body;
-        const logo = req.file ? req.file.filename : null;
+        let logo = null;
 
         if (!name) {
             return res.status(400).json({ message: 'El nombre del equipo es obligatorio' });
@@ -16,9 +32,12 @@ const createTeam = async (req, res) => {
             return res.status(400).json({ message: 'El nombre del entrenador es obligatorio' });
         }
 
-        if (!logo) {
+        if (!req.file) {
             return res.status(400).json({ message: 'El logo del equipo es obligatorio' });
         }
+
+        // Subir logo a Cloudinary
+        logo = await uploadToCloudinary(req.file.buffer);
 
         const team = new Team({ name, logo, coach });
         await team.save();
@@ -89,9 +108,12 @@ const updateTeam = async (req, res) => {
     try {
         const update = {};
         if (req.body.name) update.name = req.body.name;
-        if (req.file) update.logo = req.file.filename;
 
-        // Si no usas multer, req.file será undefined y solo se actualizará el nombre
+        if (req.file) {
+            // Subir nuevo logo a Cloudinary
+            update.logo = await uploadToCloudinary(req.file.buffer);
+        }
+
         const team = await Team.findByIdAndUpdate(req.params.id, update, { new: true }).populate('players');
         if (!team) return res.status(404).json({ message: 'Equipo no encontrado' });
         res.status(200).json(team);

@@ -3,7 +3,7 @@ const { createTeam, getAllTeams, getTeamById, updateTeam, deleteTeam, getTeamByC
 const router = express.Router();
 const upload = require('../middleware/upload');
 
-router.post('/create', upload.single('teamLogo'), createTeam);
+router.post('/create', upload.single('logo'), createTeam);
 router.get('/get', getAllTeams);
 router.get('/getby/:id', getTeamById);
 router.get('/getbycoach/:id', getTeamByCoach);

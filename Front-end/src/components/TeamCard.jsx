@@ -3,7 +3,7 @@ const TeamCard = ({ team }) => {
         <li className="bg-gray-100 p-4 rounded-lg shadow-md flex flex-col items-center">
             {team.logo && (
                 <img
-                    src={`https://voley-journal.onrender.com/media/${team.logo}`}
+                    src={team.logo}
                     alt={team.name}
                     className="w-20 h-20 object-cover rounded-full mb-2"
                 />

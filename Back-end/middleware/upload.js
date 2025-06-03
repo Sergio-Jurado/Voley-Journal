@@ -1,14 +1,7 @@
 const multer = require('multer');
-const path = require('path');
 
-const storage = multer.diskStorage({
-    destination: (req, file, cb) => {
-        cb(null, 'media/');
-    },
-    filename: (req, file, cb) => {
-        cb(null, Date.now() + path.extname(file.originalname));
-    }
-});
+// Usar almacenamiento en memoria para trabajar con Cloudinary
+const storage = multer.memoryStorage();
 
 const upload = multer({ storage });
 

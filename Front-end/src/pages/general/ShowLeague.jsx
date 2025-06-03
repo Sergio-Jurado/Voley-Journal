@@ -296,7 +296,7 @@ const ShowLeague = () => {
             <div className="flex items-center justify-center mb-8 gap-6 flex-wrap">
                 {(editMode ? (editPreview || league.logo) : league.logo) && (
                     <img
-                        src={editMode ? (editPreview || `https://voley-journal.onrender.com/media/${league.logo}`) : `https://voley-journal.onrender.com/media/${league.logo}`}
+                        src={editMode ? (editPreview || league.logo) : league.logo}
                         alt={league.name}
                         className="w-32 h-32 object-cover rounded-full border-4 border-blue-300 shadow-lg"
                     />
@@ -389,7 +389,7 @@ const ShowLeague = () => {
                             >
                                 <div className="w-16 h-16 mb-2 flex items-center justify-center bg-blue-50 rounded-full border-2 border-blue-200 shadow">
                                     <img
-                                        src={t.logo ? `https://voley-journal.onrender.com/media/${t.logo}` : "/default-team.png"}
+                                        src={t.logo ? t.logo : "/default-team.png"}
                                         alt={t.name}
                                         className="w-14 h-14 object-cover rounded-full"
                                     />
@@ -426,7 +426,7 @@ const ShowLeague = () => {
                                         <td className="py-4 px-6 text-center font-bold text-blue-700 text-lg">{idx + 1}</td>
                                         <td className="py-4 px-6 flex items-center gap-3 justify-center">
                                             <img
-                                                src={team.logo ? `https://voley-journal.onrender.com/media/${team.logo}` : "/default-team.png"}
+                                                src={team.logo ? team.logo : "/default-team.png"}
                                                 alt={team.name}
                                                 className="w-10 h-10 object-cover rounded-full border-2 border-blue-300 shadow"
                                             />
@@ -466,7 +466,7 @@ const ShowLeague = () => {
                                     {/* Equipo local */}
                                     <div className="flex flex-col items-center w-1/3">
                                         <img
-                                            src={match.homeTeam?.logo ? `https://voley-journal.onrender.com/media/${match.homeTeam.logo}` : "/default-team.png"}
+                                            src={match.homeTeam?.logo ? match.homeTeam.logo : "/default-team.png"}
                                             alt={match.homeTeam?.name || match.homeTeam}
                                             className="w-14 h-14 object-cover rounded-full border-2 border-blue-300 shadow mb-2"
                                         />
@@ -482,7 +482,7 @@ const ShowLeague = () => {
                                     {/* Equipo visitante */}
                                     <div className="flex flex-col items-center w-1/3">
                                         <img
-                                            src={match.awayTeam?.logo ? `https://voley-journal.onrender.com/media/${match.awayTeam.logo}` : "/default-team.png"}
+                                            src={match.awayTeam?.logo ? match.awayTeam.logo : "/default-team.png"}
                                             alt={match.awayTeam?.name || match.awayTeam}
                                             className="w-14 h-14 object-cover rounded-full border-2 border-blue-300 shadow mb-2"
                                         />

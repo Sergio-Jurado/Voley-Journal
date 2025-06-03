@@ -3,7 +3,7 @@ const PlayerCard = ({ player }) => {
         <div className="relative bg-blue-50 rounded-2xl shadow-xl p-5 flex flex-row items-center border-2 border-blue-200 hover:shadow-2xl transition-shadow duration-300">
             {player.image && (
                 <img
-                    src={`https://voley-journal.onrender.com/media/${player.image}`}
+                    src={player.image}
                     alt={`${player.name} ${player.lastName}`}
                     className="w-20 h-20 object-cover rounded-full border-4 border-blue-400 shadow-md mr-6"
                 />

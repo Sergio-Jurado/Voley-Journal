@@ -32,7 +32,7 @@ const CreateLeague = () => {
             // Crear la liga
             const leagueFormData = new FormData();
             leagueFormData.append('name', leagueName);
-            leagueFormData.append('leagueLogo', leagueLogo);
+            leagueFormData.append('logo', leagueLogo);
 
             const leagueResponse = await fetch('https://voley-journal.onrender.com/api/leagues/create', {
                 method: 'POST',

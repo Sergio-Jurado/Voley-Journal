@@ -1,16 +1,34 @@
 const News = require('../models/News');
+const cloudinary = require('../cloudinary');
+const streamifier = require('streamifier');
+
+// Función auxiliar para subir a Cloudinary
+async function uploadToCloudinary(fileBuffer) {
+    return new Promise((resolve, reject) => {
+        const stream = cloudinary.uploader.upload_stream(
+            { resource_type: 'image' },
+            (error, result) => {
+                if (result) resolve(result.secure_url);
+                else reject(error);
+            }
+        );
+        streamifier.createReadStream(fileBuffer).pipe(stream);
+    });
+}
 
 // Crear un nuevo artículo
 const createNews = async (req, res) => {
     try {
         const { title, text, createdBy } = req.body;
-        const image = req.file ? req.file.filename : null;
 
-        if (!image) {
+        if (!req.file) {
             return res.status(400).json({ message: 'La imagen es obligatoria' });
         }
 
-        const newArticle = new News({ title, text, image, createdBy });
+        // Subir imagen a Cloudinary
+        const imageUrl = await uploadToCloudinary(req.file.buffer);
+
+        const newArticle = new News({ title, text, image: imageUrl, createdBy });
         await newArticle.save();
         res.status(201).json(newArticle);
     } catch (error) {
@@ -43,10 +61,12 @@ const getNewsById = async (req, res) => {
 const updateNews = async (req, res) => {
     try {
         const { title, text, league } = req.body;
-        const image = req.file ? req.file.filename : undefined;
-
         const updatedData = { title, text, League: league };
-        if (image) updatedData.image = image;
+
+        if (req.file) {
+            // Subir nueva imagen a Cloudinary
+            updatedData.image = await uploadToCloudinary(req.file.buffer);
+        }
 
         const article = await News.findByIdAndUpdate(req.params.id, updatedData, { new: true });
         if (!article) return res.status(404).json({ message: 'Artículo no encontrado' });

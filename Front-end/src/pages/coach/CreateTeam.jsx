@@ -54,7 +54,7 @@ const CreateTeam = () => {
         try {
             const formData = new FormData();
             formData.append("name", teamName);
-            formData.append("teamLogo", teamLogo);
+            formData.append("logo", teamLogo);
             formData.append("coach", createdBy);
 
             const response = await fetch("https://voley-journal.onrender.com/api/teams/create", {
