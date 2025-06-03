@@ -36,7 +36,7 @@ export const Header = () => {
                 <a href="/main" className="flex items-center group">
                     <img
                         className="h-16 md:h-20 transition-transform group-hover:scale-105"
-                        src="/media/logo.png"
+                        src="/media/Logo.png"
                         alt="Logo"
                         style={{ borderRadius: "12px", border: "none" }}
                     />

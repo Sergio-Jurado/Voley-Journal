@@ -5,7 +5,7 @@ const LandingPage = () => {
         <div className="min-h-screen bg-gradient-to-br from-blue-100 to-blue-300 flex flex-col items-center justify-center px-2">
             <div className="bg-white bg-opacity-95 rounded-xl shadow-xl p-8 w-full max-w-4xl flex flex-col items-center border border-blue-200">
                 <img
-                    src="/media/logo.png"
+                    src="/media/Logo.png"
                     alt="Voley Journal Logo"
                     className="w-20 h-20 mb-4 rounded-full shadow border-2 border-blue-200"
                 />
