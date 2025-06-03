@@ -1,5 +1,5 @@
 const News = require('../models/News');
-const cloudinary = require('../cloudinary');
+const cloudinary = require('../middleware/cloudinary');
 const streamifier = require('streamifier');
 
 // Función auxiliar para subir a Cloudinary

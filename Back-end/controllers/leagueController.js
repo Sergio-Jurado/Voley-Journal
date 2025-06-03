@@ -3,7 +3,7 @@ const Team = require('../models/Team');
 const Player = require('../models/Player');
 const Match = require('../models/Match');
 const mongoose = require('mongoose');
-const cloudinary = require('../cloudinary');
+const cloudinary = require('../middleware/cloudinary');
 const streamifier = require('streamifier');
 
 // Función auxiliar para subir a Cloudinary

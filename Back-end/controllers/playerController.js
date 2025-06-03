@@ -1,6 +1,6 @@
 const Player = require('../models/Player');
 const Team = require('../models/Team');
-const cloudinary = require('../cloudinary');
+const cloudinary = require('../middleware/cloudinary');
 const streamifier = require('streamifier');
 
 // Función auxiliar para subir a Cloudinary
