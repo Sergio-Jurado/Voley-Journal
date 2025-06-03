@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
 import LeagueSearch from "../../components/LeagueSearch";
 import LeagueCard from "../../components/LeagueCard";
 

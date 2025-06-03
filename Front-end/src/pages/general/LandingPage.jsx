@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import logo from "../../../../Back-end/media/logo.png"; // Ajusta la ruta si es necesario
+import logo from "../../../public/media/logo.png";
 
 const LandingPage = () => {
     return (

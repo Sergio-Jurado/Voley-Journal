@@ -1,4 +1,4 @@
-import img from "../../../Back-end/media/logo.png";
+import img from "../../public/media/logo.png";
 import { useState, useEffect } from "react";
 import useLogout from "../utils/useLogout";
 
