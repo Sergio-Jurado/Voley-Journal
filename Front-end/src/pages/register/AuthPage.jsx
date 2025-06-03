@@ -247,7 +247,7 @@ const AuthPage = () => {
         <div
             className="flex h-screen w-full flex-col items-center justify-center bg-gray-900 bg-cover bg-no-repeat"
             style={{
-                backgroundImage: `url(${fondo})`,
+                backgroundImage: `url(/media/fondo.jpg)`,
             }}
         >
             {/* Encabezado */}

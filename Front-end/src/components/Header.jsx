@@ -1,4 +1,3 @@
-import img from "../../public/media/logo.png";
 import { useState, useEffect } from "react";
 import useLogout from "../utils/useLogout";
 
@@ -37,7 +36,7 @@ export const Header = () => {
                 <a href="/main" className="flex items-center group">
                     <img
                         className="h-16 md:h-20 transition-transform group-hover:scale-105"
-                        src={img}
+                        src="/media/logo.png"
                         alt="Logo"
                         style={{ borderRadius: "12px", border: "none" }}
                     />
