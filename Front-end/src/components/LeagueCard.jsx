@@ -6,7 +6,7 @@ const LeagueCard = ({ league }) => {
             <div className="flex flex-col items-center py-8 px-4">
                 <div className="bg-white rounded-full border-4 border-blue-200 shadow-lg mb-4">
                     <img
-                        src={`http://localhost:5000/media/${league.logo}`}
+                        src={`https://voley-journal.onrender.com/media/${league.logo}`}
                         alt={league.name}
                         className="w-20 h-20 object-cover rounded-full"
                     />

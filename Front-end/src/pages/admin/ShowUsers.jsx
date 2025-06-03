@@ -4,14 +4,14 @@ const ShowUsers = () => {
     const [users, setUsers] = useState([]);
 
     useEffect(() => {
-        fetch('http://localhost:5000/api/users/get')
+        fetch('https://voley-journal.onrender.com/api/users/get')
             .then(response => response.json())
             .then(data => setUsers(data))
             .catch(error => console.error('Error fetching users:', error));
     }, []);
 
     const deleteUser = (userId) => {
-        fetch(`http://localhost:5000/api/users/delete/${userId}`, {
+        fetch(`https://voley-journal.onrender.com/api/users/delete/${userId}`, {
             method: "DELETE",
         })
             .then((response) => {

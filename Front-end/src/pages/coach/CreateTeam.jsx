@@ -16,7 +16,7 @@ const CreateTeam = () => {
         const fetchUser = async () => {
             if (token) {
                 try {
-                    const response = await fetch(`http://localhost:5000/api/users/getby/${token}`);
+                    const response = await fetch(`https://voley-journal.onrender.com/api/users/getby/${token}`);
                     if (response.ok) {
                         const user = await response.json();
                         setCreatedBy(user.username);
@@ -57,7 +57,7 @@ const CreateTeam = () => {
             formData.append("teamLogo", teamLogo);
             formData.append("coach", createdBy);
 
-            const response = await fetch("http://localhost:5000/api/teams/create", {
+            const response = await fetch("https://voley-journal.onrender.com/api/teams/create", {
                 method: "POST",
                 body: formData,
             });

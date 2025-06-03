@@ -48,13 +48,13 @@ const ShowLeague = () => {
     useEffect(() => {
         const fetchLeagueAndTeams = async () => {
             try {
-                const res = await fetch(`http://localhost:5000/api/leagues/getby/${id}`);
+                const res = await fetch(`https://voley-journal.onrender.com/api/leagues/getby/${id}`);
                 const data = await res.json();
                 setLeague(data);
 
                 if (data.teams && data.teams.length > 0) {
                     if (typeof data.teams[0] !== "object") {
-                        const teamsRes = await fetch(`http://localhost:5000/api/teams/getmany`, {
+                        const teamsRes = await fetch(`https://voley-journal.onrender.com/api/teams/getmany`, {
                             method: "POST",
                             headers: { "Content-Type": "application/json" },
                             body: JSON.stringify({ teamIds: data.teams }),
@@ -78,7 +78,7 @@ const ShowLeague = () => {
     useEffect(() => {
         const fetchMatches = async () => {
             try {
-                const res = await fetch(`http://localhost:5000/api/matches/byLeague/${id}`);
+                const res = await fetch(`https://voley-journal.onrender.com/api/matches/byLeague/${id}`);
                 if (res.ok) {
                     const data = await res.json();
                     setMatches(data);
@@ -103,12 +103,12 @@ const ShowLeague = () => {
         setIsAuthenticated(true);
         const fetchUserAndTeam = async () => {
             try {
-                const userRes = await fetch(`http://localhost:5000/api/users/getby/${token}`);
+                const userRes = await fetch(`https://voley-journal.onrender.com/api/users/getby/${token}`);
                 const userData = await userRes.json();
                 setRole(userData.role);
 
                 if (userData.role === "coach") {
-                    const teamRes = await fetch(`http://localhost:5000/api/teams/getbycoach/${token}`);
+                    const teamRes = await fetch(`https://voley-journal.onrender.com/api/teams/getbycoach/${token}`);
                     const teamData = await teamRes.json();
                     setTeam(teamData && teamData._id ? teamData : null);
                 }
@@ -124,7 +124,7 @@ const ShowLeague = () => {
         if (!team || !league) return;
         setLoading(true);
         try {
-            const res = await fetch(`http://localhost:5000/api/leagues/${league._id}/addTeam`, {
+            const res = await fetch(`https://voley-journal.onrender.com/api/leagues/${league._id}/addTeam`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -147,7 +147,7 @@ const ShowLeague = () => {
         if (!league) return;
         setLoading(true);
         try {
-            const res = await fetch("http://localhost:5000/api/leagues/start", {
+            const res = await fetch("https://voley-journal.onrender.com/api/leagues/start", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ leagueId: league._id }),
@@ -188,7 +188,7 @@ const ShowLeague = () => {
         }
 
         try {
-            const res = await fetch(`http://localhost:5000/api/matches/update/${matchId}`, {
+            const res = await fetch(`https://voley-journal.onrender.com/api/matches/update/${matchId}`, {
                 method: "PUT",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ setsHome, setsAway }),
@@ -238,13 +238,13 @@ const ShowLeague = () => {
         if (editLogo) formData.append("logo", editLogo);
 
         try {
-            const res = await fetch(`http://localhost:5000/api/leagues/update/${league._id}`, {
+            const res = await fetch(`https://voley-journal.onrender.com/api/leagues/update/${league._id}`, {
                 method: "PUT",
                 body: formData,
             });
             if (res.ok) {
                 // Refresca la liga tras editar
-                const updatedRes = await fetch(`http://localhost:5000/api/leagues/getby/${league._id}`);
+                const updatedRes = await fetch(`https://voley-journal.onrender.com/api/leagues/getby/${league._id}`);
                 if (updatedRes.ok) {
                     const updatedLeague = await updatedRes.json();
                     setLeague(updatedLeague);
@@ -296,7 +296,7 @@ const ShowLeague = () => {
             <div className="flex items-center justify-center mb-8 gap-6 flex-wrap">
                 {(editMode ? (editPreview || league.logo) : league.logo) && (
                     <img
-                        src={editMode ? (editPreview || `http://localhost:5000/media/${league.logo}`) : `http://localhost:5000/media/${league.logo}`}
+                        src={editMode ? (editPreview || `https://voley-journal.onrender.com/media/${league.logo}`) : `https://voley-journal.onrender.com/media/${league.logo}`}
                         alt={league.name}
                         className="w-32 h-32 object-cover rounded-full border-4 border-blue-300 shadow-lg"
                     />
@@ -389,7 +389,7 @@ const ShowLeague = () => {
                             >
                                 <div className="w-16 h-16 mb-2 flex items-center justify-center bg-blue-50 rounded-full border-2 border-blue-200 shadow">
                                     <img
-                                        src={t.logo ? `http://localhost:5000/media/${t.logo}` : "/default-team.png"}
+                                        src={t.logo ? `https://voley-journal.onrender.com/media/${t.logo}` : "/default-team.png"}
                                         alt={t.name}
                                         className="w-14 h-14 object-cover rounded-full"
                                     />
@@ -426,7 +426,7 @@ const ShowLeague = () => {
                                         <td className="py-4 px-6 text-center font-bold text-blue-700 text-lg">{idx + 1}</td>
                                         <td className="py-4 px-6 flex items-center gap-3 justify-center">
                                             <img
-                                                src={team.logo ? `http://localhost:5000/media/${team.logo}` : "/default-team.png"}
+                                                src={team.logo ? `https://voley-journal.onrender.com/media/${team.logo}` : "/default-team.png"}
                                                 alt={team.name}
                                                 className="w-10 h-10 object-cover rounded-full border-2 border-blue-300 shadow"
                                             />
@@ -466,7 +466,7 @@ const ShowLeague = () => {
                                     {/* Equipo local */}
                                     <div className="flex flex-col items-center w-1/3">
                                         <img
-                                            src={match.homeTeam?.logo ? `http://localhost:5000/media/${match.homeTeam.logo}` : "/default-team.png"}
+                                            src={match.homeTeam?.logo ? `https://voley-journal.onrender.com/media/${match.homeTeam.logo}` : "/default-team.png"}
                                             alt={match.homeTeam?.name || match.homeTeam}
                                             className="w-14 h-14 object-cover rounded-full border-2 border-blue-300 shadow mb-2"
                                         />
@@ -482,7 +482,7 @@ const ShowLeague = () => {
                                     {/* Equipo visitante */}
                                     <div className="flex flex-col items-center w-1/3">
                                         <img
-                                            src={match.awayTeam?.logo ? `http://localhost:5000/media/${match.awayTeam.logo}` : "/default-team.png"}
+                                            src={match.awayTeam?.logo ? `https://voley-journal.onrender.com/media/${match.awayTeam.logo}` : "/default-team.png"}
                                             alt={match.awayTeam?.name || match.awayTeam}
                                             className="w-14 h-14 object-cover rounded-full border-2 border-blue-300 shadow mb-2"
                                         />

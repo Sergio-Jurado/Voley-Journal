@@ -21,7 +21,7 @@ const CreatePlayer = () => {
     useEffect(() => {
         const fetchTeam = async () => {
             try {
-                const response = await fetch(`http://localhost:5000/api/teams/getbycoach/${token}`);
+                const response = await fetch(`https://voley-journal.onrender.com/api/teams/getbycoach/${token}`);
                 if (!response.ok) throw new Error("Error al obtener el equipo");
                 const data = await response.json();
                 if (data && data._id) {
@@ -70,7 +70,7 @@ const CreatePlayer = () => {
             formData.append("team", team);
             formData.append("image", image);
 
-            const response = await fetch("http://localhost:5000/api/players/create", {
+            const response = await fetch("https://voley-journal.onrender.com/api/players/create", {
                 method: "POST",
                 body: formData,
             });

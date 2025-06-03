@@ -10,7 +10,7 @@ const DeleteLeague = () => {
         const fetchLeagues = async () => {
             setLoading(true);
             try {
-                const res = await fetch("http://localhost:5000/api/leagues/get");
+                const res = await fetch("https://voley-journal.onrender.com/api/leagues/get");
                 const data = await res.json();
                 setLeagues(data);
             } catch {
@@ -26,11 +26,11 @@ const DeleteLeague = () => {
         if (!window.confirm("¿Seguro que quieres eliminar esta liga y todos sus partidos?")) return;
         try {
             // Elimina los partidos asociados primero
-            await fetch(`http://localhost:5000/api/matches/deleteByLeague/${leagueId}`, {
+            await fetch(`https://voley-journal.onrender.com/api/matches/deleteByLeague/${leagueId}`, {
                 method: "DELETE",
             });
             // Luego elimina la liga
-            const res = await fetch(`http://localhost:5000/api/leagues/delete/${leagueId}`, {
+            const res = await fetch(`https://voley-journal.onrender.com/api/leagues/delete/${leagueId}`, {
                 method: "DELETE",
             });
             if (res.ok) {
@@ -59,7 +59,7 @@ const DeleteLeague = () => {
                         <li key={league._id} className="flex items-center justify-between bg-blue-50 rounded-lg p-4 shadow border border-blue-100">
                             <div className="flex items-center gap-4">
                                 <img
-                                    src={`http://localhost:5000/media/${league.logo}`}
+                                    src={`https://voley-journal.onrender.com/media/${league.logo}`}
                                     alt={league.name}
                                     className="w-14 h-14 object-cover rounded-full border-2 border-blue-300"
                                 />

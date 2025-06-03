@@ -15,7 +15,7 @@ const useUserInfo = () => {
             }
 
             try {
-                const response = await fetch(`http://localhost:5000/api/users/getby/${userId}`);
+                const response = await fetch(`https://voley-journal.onrender.com/api/users/getby/${userId}`);
                 if (!response.ok) {
                     throw new Error('Network response was not ok');
                 }

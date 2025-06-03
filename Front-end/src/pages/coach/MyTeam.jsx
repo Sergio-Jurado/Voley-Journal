@@ -19,7 +19,7 @@ const MyTeam = () => {
     useEffect(() => {
         const fetchTeam = async () => {
             try {
-                const res = await fetch(`http://localhost:5000/api/teams/getbycoach/${token}`);
+                const res = await fetch(`https://voley-journal.onrender.com/api/teams/getbycoach/${token}`);
                 if (!res.ok) {
                     throw new Error("No se pudo obtener el equipo");
                 }
@@ -147,7 +147,7 @@ const MyTeam = () => {
             <div className="flex items-center justify-center mb-8 gap-6 flex-wrap">
                 {(editMode ? (editPreview || team.logo) : team.logo) && (
                     <img
-                        src={editMode ? (editPreview || `http://localhost:5000/media/${team.logo}`) : `http://localhost:5000/media/${team.logo}`}
+                        src={editMode ? (editPreview || `https://voley-journal.onrender.com/media/${team.logo}`) : `https://voley-journal.onrender.com/media/${team.logo}`}
                         alt={team.name}
                         className="w-32 h-32 object-cover rounded-full border-4 border-blue-300 shadow-lg"
                     />

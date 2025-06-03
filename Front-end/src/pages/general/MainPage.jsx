@@ -9,7 +9,7 @@ const MainPage = () => {
 
     const fetchLeagues = async () => {
         try {
-            const response = await fetch("http://localhost:5000/api/leagues/get");
+            const response = await fetch("https://voley-journal.onrender.com/api/leagues/get");
             if (!response.ok) {
                 throw new Error("Error al obtener las ligas");
             }

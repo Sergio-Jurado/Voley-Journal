@@ -8,7 +8,7 @@ const NewsCard = ({ newsItem, onDelete }) => {
     // Solo hace fetch si no hay currentUser aún
     useState(() => {
         if (!currentUser && token) {
-            fetch(`http://localhost:5000/api/users/getby/${token}`)
+            fetch(`https://voley-journal.onrender.com/api/users/getby/${token}`)
                 .then(res => res.json())
                 .then(user => setCurrentUser(user.username))
                 .catch(() => setCurrentUser(null));
@@ -26,7 +26,7 @@ const NewsCard = ({ newsItem, onDelete }) => {
             {newsItem.image && (
                 <div className="md:w-1/3 flex-shrink-0">
                     <img
-                        src={`http://localhost:5000/media/${newsItem.image}`}
+                        src={`https://voley-journal.onrender.com/media/${newsItem.image}`}
                         alt={newsItem.title}
                         className="w-full h-56 object-cover md:h-full"
                     />

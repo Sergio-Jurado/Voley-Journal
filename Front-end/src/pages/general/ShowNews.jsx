@@ -9,7 +9,7 @@ const ShowNews = () => {
     useEffect(() => {
         const fetchNews = async () => {
             try {
-                const response = await fetch("http://localhost:5000/api/news/get");
+                const response = await fetch("https://voley-journal.onrender.com/api/news/get");
                 if (!response.ok) {
                     throw new Error("Error al obtener las noticias");
                 }
@@ -28,7 +28,7 @@ const ShowNews = () => {
     // Función para eliminar noticia
     const handleDeleteNews = async (newsId) => {
         try {
-            const response = await fetch(`http://localhost:5000/api/news/delete/${newsId}`, {
+            const response = await fetch(`https://voley-journal.onrender.com/api/news/delete/${newsId}`, {
                 method: "DELETE",
             });
             if (!response.ok) {

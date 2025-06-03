@@ -13,7 +13,7 @@ export const Header = () => {
         const fetchRole = async () => {
             if (token) {
                 try {
-                    const response = await fetch(`http://localhost:5000/api/users/getby/${token}`);
+                    const response = await fetch(`https://voley-journal.onrender.com/api/users/getby/${token}`);
                     if (response.ok) {
                         const user = await response.json();
                         setRole(user.role || null);

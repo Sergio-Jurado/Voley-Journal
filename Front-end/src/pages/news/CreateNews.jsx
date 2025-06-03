@@ -16,7 +16,7 @@ const CreateNews = () => {
         const fetchUser = async () => {
             if (token) {
                 try {
-                    const response = await fetch(`http://localhost:5000/api/users/getby/${token}`);
+                    const response = await fetch(`https://voley-journal.onrender.com/api/users/getby/${token}`);
                     if (response.ok) {
                         const user = await response.json();
                         setCreatedBy(user.username); // Guardar el username
@@ -64,7 +64,7 @@ const CreateNews = () => {
             formData.append("image", newsImage);
             formData.append("createdBy", createdBy); // username
 
-            const response = await fetch("http://localhost:5000/api/news/create", {
+            const response = await fetch("https://voley-journal.onrender.com/api/news/create", {
                 method: "POST",
                 body: formData,
             });
