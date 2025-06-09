@@ -15,7 +15,7 @@ A continuación, se detallan los pasos para desplegar todo el proyecto usando **
 ## 1. Clona el Repositorio
 
 ```sh
-git clone https://github.com/tu-usuario/voley-journal.git
+git clone https://github.com/Sergio-Jurado/voley-journal.git
 cd voley-journal
 ```
 
